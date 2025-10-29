@@ -1,0 +1,11 @@
+node_modules
+npm-debug.log
+dist
+.git
+.gitignore
+.env.example
+README.md
+API_DOCUMENTATION.md
+.DS_Store
+uploads/*
+!uploads/.gitkeep

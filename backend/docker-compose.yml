@@ -1,0 +1,77 @@
+
+  version: '3.8'
+
+  services:
+    postgres:
+      image: postgres:15-alpine
+      container_name: postgres_db
+      restart: always
+      environment:
+        POSTGRES_USER: ${POSTGRES_USER}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        POSTGRES_DB: ${POSTGRES_DB}
+      ports:
+        - "5433:5432"
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+
+    ollama:
+      image: ollama/ollama
+      container_name: ollama_service
+      restart: unless-stopped
+      volumes:
+        - ollama_data:/root/.ollama
+      expose:
+        - "11434"
+      healthcheck:
+        test: ["CMD-SHELL", "ollama list || exit 1"]
+        interval: 30s
+        timeout: 10s
+        retries: 10
+        start_period: 60s
+
+    ollama_setup:
+      image: ollama/ollama
+      container_name: ollama_setup
+      depends_on:
+        ollama:
+          condition: service_healthy
+      entrypoint: /bin/sh
+      command: >
+        -c "
+        sleep 10 &&
+        echo 'Pulling apertus:8b model...' &&
+        OLLAMA_HOST=http://ollama:11434 ollama pull apertus:8b &&
+        echo 'Apertus 8B model is ready!'
+        "
+      restart: "no"
+
+    app:
+      build: .
+      container_name: server
+      restart: always
+      env_file:
+        - .env
+      ports:
+        - "${PORT}:${PORT}"
+      depends_on:
+        postgres:
+          condition: service_healthy
+        ollama:
+          condition: service_healthy
+      environment:
+        OLLAMA_HOST: http://ollama:11434
+        OLLAMA_MODEL: apertus:8b
+        DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      volumes:
+        - .:/usr/src/app
+        - /usr/src/app/node_modules
+
+  volumes:
+    postgres_data:
+    ollama_data:

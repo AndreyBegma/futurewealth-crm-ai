@@ -1,0 +1,45 @@
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import express from 'express';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import http from 'http';
+
+import { port } from '@config/config';
+import corsOptions from '@config/cors';
+import { v1Router } from './routes';
+
+const startServer = async () => {
+  try {
+    const app = express();
+
+    const PORT = port || 4000;
+
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(cors(corsOptions));
+    app.use(morgan('dev'));
+    app.use(
+      helmet({
+        crossOriginResourcePolicy: { policy: 'cross-origin' },
+      })
+    );
+
+    app.use('/v1', v1Router);
+
+    const server = http.createServer(app);
+    server.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+
+    return server;
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
+
+startServer().catch((error) => {
+  console.error('Unhandled error:', error);
+  process.exit(1);
+});

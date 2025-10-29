@@ -1,0 +1,30 @@
+# Dependencies
+node_modules
+package-lock.json
+
+# Build output
+dist
+build
+
+# Prisma
+prisma/migrations
+
+# Docker
+Dockerfile
+docker-compose.yml
+
+# Environment
+.env
+.env.*
+
+# Git
+.git
+.gitignore
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Coverage
+coverage
