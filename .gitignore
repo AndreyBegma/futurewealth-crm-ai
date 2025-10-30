@@ -40,3 +40,4 @@ lerna-debug.log*
 
 # OS
 Thumbs.db
+backend/apertus-8b.gguf
