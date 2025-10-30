@@ -1,5 +1,5 @@
-import type { Request, Response } from "express";
-import authService from "@/services/auth.service";
+import type { Request, Response } from 'express';
+import authService from '@/services/auth.service';
 
 class AuthController {
   async signUp(req: Request, res: Response): Promise<void> {
@@ -15,14 +15,14 @@ class AuthController {
 
       res.status(201).json({
         success: true,
-        message: "User registered successfully",
+        message: 'User registered successfully',
         data: { accessToken: result.tokens.accessToken },
       });
     } catch (error) {
-      console.error("Registration error:", error);
+      console.error('Registration error:', error);
 
       if (error instanceof Error) {
-        if (error.message === "User with this email already exists") {
+        if (error.message === 'User with this email already exists') {
           res.status(409).json({
             success: false,
             message: error.message,
@@ -33,7 +33,7 @@ class AuthController {
 
       res.status(500).json({
         success: false,
-        message: "Internal server error",
+        message: 'Internal server error',
       });
     }
   }
@@ -51,14 +51,14 @@ class AuthController {
 
       res.status(200).json({
         success: true,
-        message: "Login successful",
+        message: 'Login successful',
         data: { accessToken: result.tokens.accessToken },
       });
     } catch (error) {
-      console.error("Login error:", error);
+      console.error('Login error:', error);
 
       if (error instanceof Error) {
-        if (error.message === "Invalid credentials") {
+        if (error.message === 'Invalid credentials') {
           res.status(401).json({
             success: false,
             message: error.message,
@@ -69,7 +69,7 @@ class AuthController {
 
       res.status(500).json({
         success: false,
-        message: "Internal server error",
+        message: 'Internal server error',
       });
     }
   }
@@ -81,7 +81,7 @@ class AuthController {
       if (!refreshToken) {
         res.status(401).json({
           success: false,
-          message: "Refresh token is required",
+          message: 'Refresh token is required',
         });
         return;
       }
@@ -97,16 +97,16 @@ class AuthController {
 
       res.status(200).json({
         success: true,
-        message: "Tokens refreshed successfully",
+        message: 'Tokens refreshed successfully',
         data: { accessToken: tokens.accessToken },
       });
     } catch (error) {
-      console.error("Token refresh error:", error);
+      console.error('Token refresh error:', error);
 
       res.clearCookie('refreshToken');
       res.status(401).json({
         success: false,
-        message: "Invalid refresh token",
+        message: 'Invalid refresh token',
       });
     }
   }
@@ -118,7 +118,7 @@ class AuthController {
       if (!userId) {
         res.status(401).json({
           success: false,
-          message: "Unauthorized",
+          message: 'Unauthorized',
         });
         return;
       }
@@ -130,11 +130,11 @@ class AuthController {
         data: user,
       });
     } catch (error) {
-      console.error("Get current user error:", error);
+      console.error('Get current user error:', error);
 
       res.status(404).json({
         success: false,
-        message: "User not found",
+        message: 'User not found',
       });
     }
   }

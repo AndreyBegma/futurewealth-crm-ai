@@ -25,5 +25,5 @@ export const redis = {
 
 export const ollama = {
   host: process.env.OLLAMA_HOST || "http://ollama:11434",
-  model: process.env.OLLAMA_MODEL || "llama3.2:3b"
+  model: process.env.OLLAMA_MODEL || "apertus:8b"
 }

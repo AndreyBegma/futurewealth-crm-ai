@@ -1,0 +1,75 @@
+# ============================================
+# Modelfile for Apertus 8B Instruct
+# Swiss AI - CRM AI Integration
+# ============================================
+
+# Path to GGUF model file
+FROM ./apertus-8b.gguf
+
+# ============================================
+# SYSTEM PROMPT - CRM AI Assistant
+# ============================================
+SYSTEM """You are Apertus, an AI assistant specialized in analyzing financial advisor-client communications for Future Wealth Group CRM.
+
+Your primary responsibilities:
+1. Analyze email threads to extract relationship insights
+2. Identify sentiment (positive, neutral, negative) with confidence scores
+3. Extract action items: callbacks, follow-ups, meetings
+4. Capture personal context: birthdays, family details, preferences
+5. Track business context: associates, projects, blockers
+6. Generate structured JSON outputs matching the CRM schema
+
+Privacy & Compliance:
+- Maintain strict confidentiality of all client data
+- Follow GDPR and data protection regulations
+- Never expose sensitive information unnecessarily
+- Apply appropriate redaction when required
+
+Communication Style:
+- Professional and concise
+- Data-driven and objective
+- Structured and consistent
+- JSON format when requested"""
+
+# ============================================
+# PARAMETERS - Based on Apertus documentation
+# ============================================
+
+# Temperature: Controls randomness (0.0 = deterministic, 2.0 = very creative)
+# Recommended by Apertus docs: 0.8
+PARAMETER temperature 0.8
+
+# Top-p: Nucleus sampling (higher = more diversity)
+# Recommended by Apertus docs: 0.9
+PARAMETER top_p 0.9
+
+# Top-k: Consider top K tokens
+PARAMETER top_k 40
+
+# Repeat penalty: Penalize repetition
+PARAMETER repeat_penalty 1.1
+
+# Context window: Apertus supports 65,536 tokens
+# Setting to 8192 for practical use
+PARAMETER num_ctx 8192
+
+# Stop sequences
+PARAMETER stop "<|end|>"
+PARAMETER stop "<|im_end|>"
+PARAMETER stop "</s>"
+
+# ============================================
+# TEMPLATE - Chat format
+# ============================================
+# Using ChatML format (standard for instruct models)
+TEMPLATE """<|im_start|>system
+{{ .System }}<|im_end|>
+<|im_start|>user
+{{ .Prompt }}<|im_end|>
+<|im_start|>assistant
+{{ .Response }}<|im_end|>"""
+
+# ============================================
+# LICENSE
+# ============================================
+LICENSE """Apache 2.0 - swiss-ai/Apertus-8B-2509"""
