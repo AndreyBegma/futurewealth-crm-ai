@@ -4,8 +4,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { FiLock, FiMail, FiUser } from 'react-icons/fi';
 
-import { useAppSelector } from '@/app/store/hooks';
-
+import { useAppSelector } from '@/shared/lib/hooks';
 import { Button } from '@/shared/ui/Button';
 import { TextField } from '@/shared/ui/TextField';
 

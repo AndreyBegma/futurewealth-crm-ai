@@ -1,10 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 
-import { useAppDispatch } from '@/app/store/hooks';
-
 import { loginThunk } from '@/entities/user/model/thunks';
 
 import { ROUTES } from '@/shared/config';
+import { useAppDispatch } from '@/shared/lib/hooks';
 
 import type { LoginFormData } from '../validation';
 

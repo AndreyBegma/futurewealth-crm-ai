@@ -7,8 +7,9 @@ import { tokenStorage } from '@/shared/lib/storage/tokenStorage';
 import apiRoutes, { API_BASE_URL } from './api.route';
 
 interface TokenResponse {
-  accessToken: string;
-  refreshToken: string;
+  data: {
+    accessToken: string;
+  };
 }
 
 interface FailedRequest {
@@ -72,35 +73,26 @@ export const setupInterceptors = (navigate: NavigateFunction) => {
         originalRequest._retry = true;
         isRefreshing = true;
 
-        const refreshToken = tokenStorage.getRefreshToken();
-        if (!refreshToken) {
-          tokenStorage.clearTokens();
-          navigate('/auth/login', { replace: true });
-          return Promise.reject(error);
-        }
-
         try {
-          const response = await axios.post<TokenResponse>(apiRoutes.auth.refresh, {
-            refreshToken,
-          });
-          const { accessToken, refreshToken: newRefreshToken } = response.data;
+          const response = await axiosInstance.post<TokenResponse>(apiRoutes.auth.refresh);
+          const { accessToken } = response.data.data;
 
-          tokenStorage.setTokens(accessToken, newRefreshToken);
+          tokenStorage.setAccessToken(accessToken);
           if (originalRequest.headers)
             originalRequest.headers.Authorization = `Bearer ${accessToken}`;
 
           processQueue(null, accessToken);
-          isRefreshing = false;
 
           return axiosInstance(originalRequest);
         } catch (refreshError) {
           processQueue(refreshError as AxiosError, null);
-          isRefreshing = false;
 
           tokenStorage.clearTokens();
           navigate('/auth/login', { replace: true });
 
           return Promise.reject(refreshError);
+        } finally {
+          isRefreshing = false;
         }
       }
 

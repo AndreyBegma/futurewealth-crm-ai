@@ -2,13 +2,12 @@ import type { FC } from 'react';
 
 import { Navigate, Outlet } from 'react-router-dom';
 
-import { useAppSelector } from '@/app/store/hooks';
-
-import { selectIsAuthenticated } from '@/entities/user/model/selectors';
+import { selectIsAuthenticated } from '@/entities/user';
 
 import { ROUTES } from '@/shared/config';
+import { useAppSelector } from '@/shared/lib/hooks';
 
-const PublicLayout: FC = () => {
+const PublicRoute: FC = () => {
   const isAuth = useAppSelector(selectIsAuthenticated);
 
   if (isAuth) return <Navigate to={ROUTES.dashboard} replace />;
@@ -16,4 +15,4 @@ const PublicLayout: FC = () => {
   return <Outlet />;
 };
 
-export default PublicLayout;
+export default PublicRoute;

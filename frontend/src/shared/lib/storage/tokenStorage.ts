@@ -1,11 +1,9 @@
 interface TokenData {
   accessToken: string;
-  refreshToken: string;
 }
 
 const TOKEN_KEYS = {
   ACCESS: 'accessToken',
-  REFRESH: 'refreshToken',
 } as const;
 
 interface StorageAdapter {
@@ -41,7 +39,6 @@ const localStorageAdapter: StorageAdapter = {
   clear: () => {
     try {
       localStorage.removeItem(TOKEN_KEYS.ACCESS);
-      localStorage.removeItem(TOKEN_KEYS.REFRESH);
     } catch (error) {
       console.error('Error clearing localStorage:', error);
     }
@@ -59,47 +56,12 @@ class TokenStorage {
     return this.adapter.get(TOKEN_KEYS.ACCESS);
   }
 
-  getRefreshToken(): string | null {
-    return this.adapter.get(TOKEN_KEYS.REFRESH);
-  }
-
-  getTokens(): TokenData | null {
-    const accessToken = this.getAccessToken();
-    const refreshToken = this.getRefreshToken();
-
-    if (!accessToken || !refreshToken) {
-      return null;
-    }
-
-    return { accessToken, refreshToken };
-  }
-
   setAccessToken(token: string): void {
     this.adapter.set(TOKEN_KEYS.ACCESS, token);
   }
 
-  setRefreshToken(token: string): void {
-    this.adapter.set(TOKEN_KEYS.REFRESH, token);
-  }
-
-  setTokens(data: TokenData): void;
-  setTokens(accessToken: string, refreshToken: string): void;
-  setTokens(dataOrAccessToken: TokenData | string, refreshToken?: string): void {
-    if (typeof dataOrAccessToken === 'string' && refreshToken) {
-      this.adapter.set(TOKEN_KEYS.ACCESS, dataOrAccessToken);
-      this.adapter.set(TOKEN_KEYS.REFRESH, refreshToken);
-    } else if (typeof dataOrAccessToken === 'object') {
-      this.adapter.set(TOKEN_KEYS.ACCESS, dataOrAccessToken.accessToken);
-      this.adapter.set(TOKEN_KEYS.REFRESH, dataOrAccessToken.refreshToken);
-    }
-  }
-
   removeAccessToken(): void {
     this.adapter.remove(TOKEN_KEYS.ACCESS);
-  }
-
-  removeRefreshToken(): void {
-    this.adapter.remove(TOKEN_KEYS.REFRESH);
   }
 
   clearTokens(): void {
@@ -107,15 +69,11 @@ class TokenStorage {
   }
 
   isAuthenticated(): boolean {
-    return !!(this.getAccessToken() && this.getRefreshToken());
+    return !!this.getAccessToken();
   }
 
   hasAccessToken(): boolean {
     return !!this.getAccessToken();
-  }
-
-  hasRefreshToken(): boolean {
-    return !!this.getRefreshToken();
   }
 }
 

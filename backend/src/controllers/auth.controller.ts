@@ -6,10 +6,17 @@ class AuthController {
     try {
       const result = await authService.register(req.body);
 
+      res.cookie('refreshToken', result.tokens.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
       res.status(201).json({
         success: true,
         message: "User registered successfully",
-        data: result,
+        data: { accessToken: result.tokens.accessToken },
       });
     } catch (error) {
       console.error("Registration error:", error);
@@ -35,10 +42,17 @@ class AuthController {
     try {
       const result = await authService.login(req.body);
 
+      res.cookie('refreshToken', result.tokens.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
       res.status(200).json({
         success: true,
         message: "Login successful",
-        data: result,
+        data: { accessToken: result.tokens.accessToken },
       });
     } catch (error) {
       console.error("Login error:", error);
@@ -62,10 +76,10 @@ class AuthController {
 
   async refreshTokens(req: Request, res: Response): Promise<void> {
     try {
-      const { refreshToken } = req.body;
+      const refreshToken = req.cookies.refreshToken;
 
       if (!refreshToken) {
-        res.status(400).json({
+        res.status(401).json({
           success: false,
           message: "Refresh token is required",
         });
@@ -74,14 +88,22 @@ class AuthController {
 
       const tokens = await authService.refreshTokens(refreshToken);
 
+      res.cookie('refreshToken', tokens.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
       res.status(200).json({
         success: true,
         message: "Tokens refreshed successfully",
-        data: tokens,
+        data: { accessToken: tokens.accessToken },
       });
     } catch (error) {
       console.error("Token refresh error:", error);
 
+      res.clearCookie('refreshToken');
       res.status(401).json({
         success: false,
         message: "Invalid refresh token",

@@ -9,7 +9,6 @@ const initialState: UserState = {
   currentUser: null,
   tokens: {
     accessToken: tokenStorage.getAccessToken(),
-    refreshToken: tokenStorage.getRefreshToken(),
   },
   isAuthenticated: tokenStorage.isAuthenticated(),
   initialized: false,
@@ -37,9 +36,9 @@ export const userSlice = createSlice({
         console.log(action);
         state.loading = false;
 
-        const tokens = action.payload.data.tokens;
+        const tokens = action.payload.data;
         state.tokens = tokens;
-        tokenStorage.setTokens(tokens.accessToken, tokens.refreshToken);
+        tokenStorage.setAccessToken(tokens.accessToken);
 
         state.isAuthenticated = true;
       })
@@ -54,9 +53,9 @@ export const userSlice = createSlice({
       })
       .addCase(registerThunk.fulfilled, (state, action) => {
         state.loading = false;
-        const tokens = action.payload.data.tokens;
+        const tokens = action.payload.data;
         state.tokens = tokens;
-        tokenStorage.setTokens(tokens.accessToken, tokens.refreshToken);
+        tokenStorage.setAccessToken(tokens.accessToken);
         state.isAuthenticated = true;
       })
       .addCase(registerThunk.rejected, (state, action) => {
@@ -81,7 +80,6 @@ export const userSlice = createSlice({
         state.isAuthenticated = false;
         state.tokens = {
           accessToken: null,
-          refreshToken: null,
         };
         tokenStorage.clearTokens();
       });

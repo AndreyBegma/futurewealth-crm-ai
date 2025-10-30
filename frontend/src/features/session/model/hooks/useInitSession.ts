@@ -14,7 +14,7 @@ const UseInitSession = () => {
     if (isAuthenticated && currentUser === null) {
       dispatch(fetchCurrentUserThunk());
     }
-  }, [isAuthenticated, currentUser]);
+  }, [isAuthenticated, currentUser, dispatch]);
 };
 
 export default UseInitSession;

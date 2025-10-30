@@ -1,4 +1,4 @@
-import type { ApiResponse, AuthTokens } from '@/entities/user';
+import type { ApiResponse, AuthTokens } from '@/shared/types';
 
 import { api } from './api';
 import apiRoutes from './api.route';
@@ -14,10 +14,6 @@ export interface SignUpRequest {
   password: string;
 }
 
-export interface RefreshTokenRequest {
-  refreshToken: string;
-}
-
 export interface UserData {
   id: string;
   name: string | null;
@@ -31,9 +27,7 @@ export interface UserResponse {
   data: UserData;
 }
 
-export type AuthResponse = ApiResponse<{ tokens: AuthTokens }>;
-
-export type RefreshTokenResponse = ApiResponse<AuthTokens>;
+export type AuthResponse = ApiResponse<AuthTokens>;
 
 export const authApi = {
   signIn: async (data: LoginRequest): Promise<AuthResponse> => {
@@ -42,10 +36,6 @@ export const authApi = {
 
   signUp: async (data: SignUpRequest): Promise<AuthResponse> => {
     return api.post<AuthResponse>(apiRoutes.auth.signUp, data);
-  },
-
-  refreshTokens: async (data: RefreshTokenRequest): Promise<RefreshTokenResponse> => {
-    return api.post<RefreshTokenResponse>(apiRoutes.auth.refresh, data);
   },
 
   getCurrentUser: async (): Promise<UserResponse> => {

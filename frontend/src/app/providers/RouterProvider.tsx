@@ -7,10 +7,10 @@ import HomePage from '@/pages/HomePage';
 import LoginPage from '@/pages/LoginPage';
 import RegisterPage from '@/pages/RegisterPage';
 
+import { PublicRoute } from '@/features/auth/public-route';
 import { RequireAuth } from '@/features/auth/require-auth';
 
 import { ROUTES } from '@/shared/config/routes';
-import { PublicLayout } from '@/shared/ui/Routes';
 
 export const RouterProvider: FC = () => {
   return (
@@ -18,7 +18,7 @@ export const RouterProvider: FC = () => {
       <Routes>
         <Route path={ROUTES.home} element={<HomePage />} />
 
-        <Route element={<PublicLayout />}>
+        <Route element={<PublicRoute />}>
           <Route path={ROUTES.auth.login} element={<LoginPage />} />
           <Route path={ROUTES.auth.register} element={<RegisterPage />} />
         </Route>

@@ -1,10 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 
-import { useAppDispatch } from '@/app/store/hooks';
-
 import { registerThunk } from '@/entities/user/model/thunks';
 
 import { ROUTES } from '@/shared/config';
+import { useAppDispatch } from '@/shared/lib/hooks';
 
 import type { RegisterFormData } from '../validation';
 

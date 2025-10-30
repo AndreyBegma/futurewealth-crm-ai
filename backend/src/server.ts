@@ -1,4 +1,5 @@
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
@@ -25,6 +26,7 @@ const startServer = async () => {
 
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(cookieParser());
     app.use(cors(corsOptions));
     app.use(morgan('dev'));
     app.use(

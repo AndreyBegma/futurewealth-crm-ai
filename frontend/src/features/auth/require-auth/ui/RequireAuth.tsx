@@ -2,13 +2,12 @@ import type { FC } from 'react';
 
 import { Navigate, Outlet } from 'react-router-dom';
 
-import { useAppSelector } from '@/app/store/hooks';
-
 import { useInitSession } from '@/features/session';
 
 import { selectIsAuthenticated } from '@/entities/user/model/selectors';
 
 import { ROUTES } from '@/shared/config';
+import { useAppSelector } from '@/shared/lib/hooks';
 
 const RequireAuth: FC = () => {
   const isAuth = useAppSelector(selectIsAuthenticated);
