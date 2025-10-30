@@ -15,3 +15,15 @@ export const database = {
 
 export const jwtSecret = process.env.JWT_SECRET || "sec_key";
 export const corsOrigin = process.env.CORS_ORIGIN || "http://localhost:5173";
+
+export const redis = { 
+   host: process.env.REDIS_HOST || "redis",
+   port: process.env.REDIS_PORT || 6379,
+   url: process.env.REDIS_URL || "redis://redis:6379"
+
+}
+
+export const ollama = {
+  host: process.env.OLLAMA_HOST || "http://ollama:11434",
+  model: process.env.OLLAMA_MODEL || "llama3.2:3b"
+}

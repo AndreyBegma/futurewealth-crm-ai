@@ -4,7 +4,6 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 import { defineConfig, globalIgnores } from 'eslint/config';
-import fsd from '@feature-sliced/eslint-config/flat';
 import boundaries from 'eslint-plugin-boundaries';
 import prettier from 'eslint-plugin-prettier';
 import prettierConfig from 'eslint-config-prettier';
@@ -22,9 +21,6 @@ export default defineConfig([
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
-      parserOptions: {
-        project: './tsconfig.json',
-      },
     },
     plugins: {
       boundaries,
@@ -32,14 +28,14 @@ export default defineConfig([
     },
     settings: {
       'boundaries/elements': [
-        { type: 'app', pattern: 'src/app/*' },
-        { type: 'pages', pattern: 'src/pages/*' },
-        { type: 'widgets', pattern: 'src/widgets/*' },
-        { type: 'features', pattern: 'src/features/*' },
-        { type: 'entities', pattern: 'src/entities/*' },
-        { type: 'shared', pattern: 'src/shared/*' },
+        { type: 'app', pattern: 'src/app/**/*' },
+        { type: 'pages', pattern: 'src/pages/**/*' },
+        { type: 'widgets', pattern: 'src/widgets/**/*' },
+        { type: 'features', pattern: 'src/features/**/*' },
+        { type: 'entities', pattern: 'src/entities/**/*' },
+        { type: 'shared', pattern: 'src/shared/**/*' },
       ],
-      'boundaries/ignore': ['**/*.test.*', '**/*.spec.*'],
+      'boundaries/ignore': ['**/*.test.*', '**/*.spec.*', '**/*.d.ts'],
     },
     rules: {
       'prettier/prettier': 'error',

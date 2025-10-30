@@ -1,0 +1,19 @@
+.container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  &__left {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 32px;
+  }
+  &__right {
+    flex: 1;
+    height: 100%;
+    background: linear-gradient(90deg, #45f9a2 0%, #4361ee 100%);
+  }
+}
