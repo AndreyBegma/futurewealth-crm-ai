@@ -1,0 +1,22 @@
+.container {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 420px;
+  border: 1px solid #254af4;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  .headerTitle {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 600;
+    color: #292d34;
+  }
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+}

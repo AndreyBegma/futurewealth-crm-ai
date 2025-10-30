@@ -1,0 +1,106 @@
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+    border-radius: 0.25rem;
+  }
+}
+
+.sm {
+  font-size: 0.875rem;
+}
+
+.md {
+  font-size: 1rem;
+}
+
+.lg {
+  font-size: 1.125rem;
+}
+
+.default {
+  color: inherit;
+
+  &:hover {
+    color: #3b82f6;
+  }
+}
+
+.primary {
+  color: #3b82f6;
+
+  &:hover {
+    color: #2563eb;
+  }
+
+  &:active {
+    color: #1d4ed8;
+  }
+}
+
+.secondary {
+  color: #6b7280;
+
+  &:hover {
+    color: #4b5563;
+  }
+
+  &:active {
+    color: #374151;
+  }
+}
+
+.danger {
+  color: #ef4444;
+
+  &:hover {
+    color: #dc2626;
+  }
+
+  &:active {
+    color: #b91c1c;
+  }
+}
+
+.muted {
+  color: #9ca3af;
+
+  &:hover {
+    color: #6b7280;
+  }
+}
+
+.underline-none {
+  text-decoration: none;
+}
+
+.underline-hover {
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.underline-always {
+  text-decoration: underline;
+}
+
+.disabled {
+  color: #d1d5db;
+  cursor: not-allowed;
+  pointer-events: none;
+
+  &:hover {
+    color: #d1d5db;
+    text-decoration: none;
+  }
+}

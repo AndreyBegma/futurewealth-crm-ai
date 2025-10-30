@@ -1,0 +1,296 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.labelFocused {
+  color: #3b82f6;
+}
+
+.labelError {
+  color: #ef4444;
+}
+
+.labelDisabled {
+  color: #9ca3af;
+}
+
+.required {
+  color: #ef4444;
+  margin-left: 0.25rem;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  transition: all 0.2s ease;
+}
+
+.input {
+  width: 100%;
+  font-size: 1rem;
+  font-family: inherit;
+  color: #111827;
+  background: transparent;
+  border: none;
+  outline: none;
+  transition: all 0.2s ease;
+
+  &::placeholder {
+    color: #9ca3af;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    color: #9ca3af;
+  }
+}
+
+textarea.input {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.sm {
+  .input {
+    font-size: 0.875rem;
+  }
+}
+
+.md {
+  .input {
+    font-size: 1rem;
+  }
+}
+
+.lg {
+  .input {
+    font-size: 1.125rem;
+  }
+}
+
+.outlined {
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+
+  &.sm {
+    padding: 0.5rem 0.75rem;
+  }
+
+  &.lg {
+    padding: 1rem 1.25rem;
+  }
+
+  &.focused {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  &.error {
+    border-color: #ef4444;
+
+    &.focused {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+  }
+
+  &.disabled {
+    background-color: #f9fafb;
+    border-color: #e5e7eb;
+  }
+}
+
+.filled {
+  padding: 0.75rem 1rem;
+  border: none;
+  border-bottom: 2px solid #d1d5db;
+  border-radius: 0.5rem 0.5rem 0 0;
+  background-color: #f9fafb;
+
+  &.sm {
+    padding: 0.5rem 0.75rem;
+  }
+
+  &.lg {
+    padding: 1rem 1.25rem;
+  }
+
+  &.focused {
+    background-color: #f3f4f6;
+    border-bottom-color: #3b82f6;
+  }
+
+  &.error {
+    border-bottom-color: #ef4444;
+
+    &.focused {
+      border-bottom-color: #ef4444;
+    }
+  }
+
+  &.disabled {
+    background-color: #f3f4f6;
+    border-bottom-color: #e5e7eb;
+  }
+}
+
+.standard {
+  padding: 0.5rem 0;
+  border: none;
+  border-bottom: 2px solid #d1d5db;
+  background-color: transparent;
+
+  &.sm {
+    padding: 0.375rem 0;
+  }
+
+  &.lg {
+    padding: 0.625rem 0;
+  }
+
+  &.focused {
+    border-bottom-color: #3b82f6;
+  }
+
+  &.error {
+    border-bottom-color: #ef4444;
+
+    &.focused {
+      border-bottom-color: #ef4444;
+    }
+  }
+
+  &.disabled {
+    border-bottom-color: #e5e7eb;
+  }
+}
+
+.hasStartIcon {
+  .input {
+    padding-left: 2.5rem;
+  }
+
+  &.sm .input {
+    padding-left: 2rem;
+  }
+
+  &.lg .input {
+    padding-left: 3rem;
+  }
+}
+
+.hasEndIcon {
+  .input {
+    padding-right: 2.5rem;
+  }
+
+  &.sm .input {
+    padding-right: 2rem;
+  }
+
+  &.lg .input {
+    padding-right: 3rem;
+  }
+}
+
+.startIcon {
+  position: absolute;
+  left: 0.75rem;
+  color: #9ca3af;
+  font-size: 1.25rem;
+  pointer-events: none;
+  transition: color 0.2s ease;
+
+  .focused & {
+    color: #3b82f6;
+  }
+
+  .error & {
+    color: #ef4444;
+  }
+}
+
+.endIcon {
+  position: absolute;
+  right: 0.75rem;
+  color: #9ca3af;
+  font-size: 1.25rem;
+  pointer-events: none;
+  transition: color 0.2s ease;
+
+  .focused & {
+    color: #6b7280;
+  }
+}
+
+.toggleButton {
+  position: absolute;
+  right: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border: none;
+  background: none;
+  color: #9ca3af;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #6b7280;
+    background-color: #f3f4f6;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  }
+
+  svg {
+    font-size: 1.25rem;
+  }
+}
+
+.helper {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.375rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.helperError {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.375rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: #ef4444;
+  line-height: 1.4;
+}
+
+.errorIcon {
+  flex-shrink: 0;
+  font-size: 0.875rem;
+  margin-top: 0.125rem;
+}
