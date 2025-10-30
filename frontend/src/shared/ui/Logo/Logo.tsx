@@ -1,6 +1,9 @@
 import type { FC } from 'react';
+
 import { Link } from 'react-router-dom';
+
 import { ROUTES } from '@/shared/config';
+
 import styles from './logo.module.scss';
 
 export interface LogoProps {
@@ -9,11 +12,7 @@ export interface LogoProps {
   clickable?: boolean;
 }
 
-export const Logo: FC<LogoProps> = ({
-  size = 'md',
-  variant = 'dark',
-  clickable = true,
-}) => {
+export const Logo: FC<LogoProps> = ({ size = 'md', variant = 'dark', clickable = true }) => {
   const logoClasses = [styles.logo, styles[size], styles[variant]].filter(Boolean).join(' ');
 
   const content = (

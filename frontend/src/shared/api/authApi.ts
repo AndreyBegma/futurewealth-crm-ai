@@ -1,9 +1,12 @@
 import type { ApiResponse, AuthTokens } from '@/entities/user';
 
-import { api } from '@/shared/api/api';
-import apiRoutes from '@/shared/api/api.route';
+import { api } from './api';
+import apiRoutes from './api.route';
 
-import type { LoginFormData } from '../model/validation';
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
 
 export interface SignUpRequest {
   name?: string;
@@ -33,7 +36,7 @@ export type AuthResponse = ApiResponse<{ tokens: AuthTokens }>;
 export type RefreshTokenResponse = ApiResponse<AuthTokens>;
 
 export const authApi = {
-  signIn: async (data: LoginFormData): Promise<AuthResponse> => {
+  signIn: async (data: LoginRequest): Promise<AuthResponse> => {
     return api.post<AuthResponse>(apiRoutes.auth.signIn, data);
   },
 

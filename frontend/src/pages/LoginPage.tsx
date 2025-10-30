@@ -1,14 +1,14 @@
 import type { FC } from 'react';
 
-import AuthContainer from '@/widgets/AuthContainer/AuthContainer';
-
 import LoginForm from '@/features/auth/ui/LoginForm/LoginForm';
+
+import { AuthLayout } from '@/shared/ui/layouts';
 
 const LoginPage: FC = () => {
   return (
-    <AuthContainer>
+    <AuthLayout>
       <LoginForm />
-    </AuthContainer>
+    </AuthLayout>
   );
 };
 

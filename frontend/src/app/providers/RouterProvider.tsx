@@ -7,8 +7,10 @@ import HomePage from '@/pages/HomePage';
 import LoginPage from '@/pages/LoginPage';
 import RegisterPage from '@/pages/RegisterPage';
 
+import { RequireAuth } from '@/features/auth/require-auth';
+
 import { ROUTES } from '@/shared/config/routes';
-import { ProtectedLayout, PublicLayout } from '@/shared/ui/Routes';
+import { PublicLayout } from '@/shared/ui/Routes';
 
 export const RouterProvider: FC = () => {
   return (
@@ -21,7 +23,7 @@ export const RouterProvider: FC = () => {
           <Route path={ROUTES.auth.register} element={<RegisterPage />} />
         </Route>
 
-        <Route element={<ProtectedLayout />}>
+        <Route element={<RequireAuth />}>
           <Route path={ROUTES.dashboard} element={<DashboardPage />} />
         </Route>
 

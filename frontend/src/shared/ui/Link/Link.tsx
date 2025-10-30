@@ -1,6 +1,8 @@
-import type { FC, AnchorHTMLAttributes, ReactNode } from 'react';
+import type { AnchorHTMLAttributes, FC, ReactNode } from 'react';
+
 import { Link as RouterLink } from 'react-router-dom';
 import type { LinkProps as RouterLinkProps } from 'react-router-dom';
+
 import styles from './Link.module.scss';
 
 type BaseLinkProps = {

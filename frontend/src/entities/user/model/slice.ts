@@ -1,9 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { loginThunk, registerThunk } from '@/features/auth/model/thunks/index';
-
 import { tokenStorage } from '@/shared/lib/storage';
 
+import { fetchCurrentUserThunk, loginThunk, registerThunk } from './thunks';
 import type { UserState } from './types';
 
 const initialState: UserState = {
@@ -63,6 +62,28 @@ export const userSlice = createSlice({
       .addCase(registerThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? 'Registration failed';
+      })
+
+      .addCase(fetchCurrentUserThunk.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCurrentUserThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentUser = action.payload.data;
+        state.initialized = true;
+      })
+      .addCase(fetchCurrentUserThunk.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? 'Failed to load user';
+        state.initialized = true;
+
+        state.isAuthenticated = false;
+        state.tokens = {
+          accessToken: null,
+          refreshToken: null,
+        };
+        tokenStorage.clearTokens();
       });
   },
 });

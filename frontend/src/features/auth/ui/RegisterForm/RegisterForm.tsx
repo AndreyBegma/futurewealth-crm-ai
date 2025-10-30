@@ -4,12 +4,14 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { FiLock, FiMail, FiUser } from 'react-icons/fi';
 
+import { useAppSelector } from '@/app/store/hooks';
+
 import { Button } from '@/shared/ui/Button';
 import { TextField } from '@/shared/ui/TextField';
 
+import { useRegister } from '../../model/hooks';
 import { type RegisterFormData, registerSchema } from '../../model/validation';
 import FormLayout from '../FormLayout/FormLayout';
-import { useAppSelector } from '@/app/store/hooks';
 
 const RegisterForm: FC = () => {
   const {
@@ -19,8 +21,10 @@ const RegisterForm: FC = () => {
   } = useForm<RegisterFormData>({
     resolver: yupResolver(registerSchema),
   });
+
+  const { handleRegister } = useRegister();
   const onSubmit = (data: RegisterFormData) => {
-    console.log(data);
+    handleRegister(data);
   };
 
   const { error } = useAppSelector((state) => state.user);

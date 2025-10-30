@@ -1,7 +1,11 @@
 import { useNavigate } from 'react-router-dom';
+
 import { useAppDispatch } from '@/app/store/hooks';
+
+import { registerThunk } from '@/entities/user/model/thunks';
+
 import { ROUTES } from '@/shared/config';
-import { registerThunk } from '../thunks';
+
 import type { RegisterFormData } from '../validation';
 
 export const useRegister = () => {
@@ -16,8 +20,7 @@ export const useRegister = () => {
     } else {
       console.error('Registration failed:', result.payload);
     }
-
   };
 
-  return { handleRegister};
+  return { handleRegister };
 };

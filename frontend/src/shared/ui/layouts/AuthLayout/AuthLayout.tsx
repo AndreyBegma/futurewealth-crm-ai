@@ -2,13 +2,13 @@ import type { FC, ReactNode } from 'react';
 
 import { Logo } from '@/shared/ui/Logo/Logo';
 
-import styles from './authContainer.module.scss';
+import styles from './AuthLayout.module.scss';
 
-interface AuthContainer {
+interface AuthLayoutProps {
   children: ReactNode;
 }
 
-const AuthContainer: FC<AuthContainer> = ({ children }) => {
+export const AuthLayout: FC<AuthLayoutProps> = ({ children }) => {
   return (
     <div className={styles.container}>
       <div className={styles.container__left}>
@@ -19,5 +19,3 @@ const AuthContainer: FC<AuthContainer> = ({ children }) => {
     </div>
   );
 };
-
-export default AuthContainer;

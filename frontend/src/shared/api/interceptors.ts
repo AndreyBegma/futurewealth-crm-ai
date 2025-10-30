@@ -1,8 +1,10 @@
 import axios, { AxiosError } from 'axios';
 import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 import type { NavigateFunction } from 'react-router-dom';
-import apiRoutes, { API_BASE_URL } from './api.route';
+
 import { tokenStorage } from '@/shared/lib/storage/tokenStorage';
+
+import apiRoutes, { API_BASE_URL } from './api.route';
 
 interface TokenResponse {
   accessToken: string;

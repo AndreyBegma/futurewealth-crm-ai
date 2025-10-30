@@ -1,14 +1,14 @@
 import type { FC } from 'react';
 
-import AuthContainer from '@/widgets/AuthContainer/AuthContainer';
-
 import RegisterForm from '@/features/auth/ui/RegisterForm/RegisterForm';
+
+import { AuthLayout } from '@/shared/ui/layouts';
 
 const RegisterPage: FC = () => {
   return (
-    <AuthContainer>
+    <AuthLayout>
       <RegisterForm />
-    </AuthContainer>
+    </AuthLayout>
   );
 };
 

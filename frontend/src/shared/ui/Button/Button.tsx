@@ -1,5 +1,7 @@
-import type { FC, ReactNode, ButtonHTMLAttributes } from 'react';
+import type { ButtonHTMLAttributes, FC, ReactNode } from 'react';
+
 import type { IconType } from 'react-icons';
+
 import styles from './button.module.scss';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -42,15 +44,11 @@ export const Button: FC<ButtonProps> = ({
     <button className={buttonClasses} disabled={isDisabled} {...props}>
       {loading && <span className={styles.spinner} />}
 
-      {!loading && Icon && iconPosition === 'left' && (
-        <Icon className={styles.iconLeft} />
-      )}
+      {!loading && Icon && iconPosition === 'left' && <Icon className={styles.iconLeft} />}
 
       {children && <span className={styles.content}>{children}</span>}
 
-      {!loading && Icon && iconPosition === 'right' && (
-        <Icon className={styles.iconRight} />
-      )}
+      {!loading && Icon && iconPosition === 'right' && <Icon className={styles.iconRight} />}
     </button>
   );
 };
