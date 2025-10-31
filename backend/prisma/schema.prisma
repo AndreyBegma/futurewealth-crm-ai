@@ -8,11 +8,76 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String?
-  password  String
- 
+  id       String  @id @default(uuid())
+  email    String  @unique
+  name     String?
+  password String
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model FakePerson {
+  id String @id @default(uuid())
+
+  firstName String  @map("first_name")
+  lastName  String  @map("last_name")
+  fullName  String? @map("full_name")
+  email     String  @unique
+
+  company       String
+  companyDomain String? @map("company_domain")
+  role          String
+  industry      String
+
+  notes         String? @db.Text
+  personalNotes String? @map("personal_notes") @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("fake_persons")
+}
+
+model ReceivedEmail {
+  id                            String    @id @default(cuid())
+  subject                       String
+  body                          Json
+  bodyPreview                   String?
+  from_                         Json      @map("from")
+  sender                        Json?
+  toRecipients                  Json
+  ccRecipients                  Json?
+  bccRecipients                 Json?
+  replyTo                       Json?
+  sentDateTime                  DateTime?
+  receivedDateTime              DateTime?
+  internetMessageId             String?   @unique
+  hasAttachments                Boolean   @default(false)
+  isRead                        Boolean   @default(false)
+  webLink                       String?
+  singleValueExtendedProperties Json?
+  rawResponse                   Json?
+
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  EmailSpamCheck EmailSpamCheck[]
+
+  @@index([receivedDateTime])
+  @@index([sentDateTime])
+  @@map("received_emails")
+}
+
+model EmailSpamCheck {
+  id         String   @id @default(cuid())
+  emailId    String
+  isSpam     Boolean
+  confidence Float?
+  modelUsed  String?
+  checkedAt  DateTime @default(now())
+
+  email ReceivedEmail @relation(fields: [emailId], references: [id])
+
+  @@index([emailId])
+  @@map("email_spam_checks")
 }

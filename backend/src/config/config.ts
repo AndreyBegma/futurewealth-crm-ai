@@ -22,9 +22,13 @@ export const redis = {
   url: process.env.REDIS_URL || 'redis://redis:6379',
 };
 
-export const ollama = {
-  host: process.env.OLLAMA_HOST || 'http://ollama:11434',
-  model: process.env.OLLAMA_MODEL || 'apertus:8b',
+export const ai = {
+  provider: process.env.AI_PROVIDER || 'ollama',
+  host: process.env.AI_HOST || 'http://ollama:11434',
+  model: process.env.AI_MODEL || 'apertus:8b',
+  apiKey: process.env.AI_API_KEY || '',
+  temperature: parseFloat(process.env.AI_TEMPERATURE || '0.8'),
+  maxTokens: parseInt(process.env.AI_MAX_TOKENS || '512', 10),
 };
 
 export const microsoftGraph = {

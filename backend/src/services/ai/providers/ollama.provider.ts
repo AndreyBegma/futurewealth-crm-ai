@@ -1,28 +1,19 @@
-import { ollama } from '@/config/config';
+import { ChatOptions, IAIProvider } from '../ai.interface';
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-class OllamaService {
+export class OllamaProvider implements IAIProvider {
   private baseUrl: string;
   private model: string;
 
-  constructor() {
-    this.baseUrl = ollama.host;
-    this.model = ollama.model;
+  constructor(baseUrl: string, model: string) {
+    this.baseUrl = baseUrl;
+    this.model = model;
   }
 
-  private async chat(
-    prompt: string,
-    options?: {
-      systemPrompt?: string;
-      temperature?: number;
-      maxTokens?: number;
-      format?: 'json' | 'text';
-      retries?: number;
-    }
-  ): Promise<string> {
+  async chat(prompt: string, options?: ChatOptions): Promise<string> {
     const retries = options?.retries ?? 3;
 
     for (let attempt = 0; attempt < retries; attempt++) {
@@ -43,7 +34,6 @@ class OllamaService {
             },
             format: options?.format === 'json' ? 'json' : undefined,
           }),
-          signal: AbortSignal.timeout(60000),
         });
 
         if (!response.ok) {
@@ -58,7 +48,7 @@ class OllamaService {
 
         return data.message.content;
       } catch (error) {
-        console.error(`[Ollama] Attempt ${attempt + 1}/${retries} failed:`, error);
+        console.error(`[OllamaProvider] Attempt ${attempt + 1}/${retries} failed:`, error);
 
         if (attempt === retries - 1) {
           throw new Error('Ollama request failed after retries');
@@ -83,7 +73,7 @@ class OllamaService {
 
       return response;
     } catch (error) {
-      console.error('Error during healthCheck:', error);
+      console.error('[OllamaProvider] Error during healthCheck:', error);
 
       if (error instanceof Error) {
         throw new Error(error.message);
@@ -93,5 +83,3 @@ class OllamaService {
     }
   }
 }
-
-export default new OllamaService();
