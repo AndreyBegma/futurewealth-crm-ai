@@ -12,10 +12,18 @@ import { v1Router } from './routes';
 import RedisConfig from './config/redis';
 import prisma from './config/database';
 
+import { contactScheduler, emailScheduler } from './queues/schedulers';
+
 const startServer = async () => {
   try {
     const app = express();
+
     RedisConfig.getClient();
+
+    contactScheduler.start();
+    emailScheduler.start();
+    console.log('✅ [Schedulers] Contact and Email schedulers started');
+
     prisma
       .$connect()
       .then(() => console.log('Database connected'))

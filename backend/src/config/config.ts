@@ -37,3 +37,15 @@ export const microsoftGraph = {
   clientSecret: process.env.CLIENT_SECRET || '',
   scope: process.env.GRAPH_SCOPE || 'https://graph.microsoft.com/.default',
 };
+
+export const bull = {
+  prefix: process.env.BULL_QUEUE_PREFIX || 'crm:queue',
+  maxJobsPerMinute: Number(process.env.MAX_JOBS_PER_MINUTE) || 1,
+  contactGenerationCron: process.env.CONTACT_GENERATION_CRON || '*/30 * * * *',
+  emailGenerationCron: process.env.EMAIL_GENERATION_CRON || '*/10 * * * *',
+  workerConcurrency: Number(process.env.WORKER_CONCURRENCY) || 1,
+  jobAttempts: Number(process.env.JOB_ATTEMPTS) || 3,
+  jobBackoffDelay: Number(process.env.JOB_BACKOFF_DELAY) || 5000,
+  jobTimeout: Number(process.env.JOB_TIMEOUT) || 60000,
+  removeOnFail: Number(process.env.BULL_REMOVE_ON_FAIL || '50'),
+};
