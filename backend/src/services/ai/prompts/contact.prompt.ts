@@ -10,7 +10,7 @@ Always return valid JSON matching the requested schema.`;
 export const CONTACT_GENERATION_OPTIONS: ChatOptions = {
   systemPrompt: CONTACT_GENERATION_SYSTEM_PROMPT,
   format: 'json',
-  temperature: 1.0,
+  temperature: 1.2,  // Increased for maximum diversity
   maxTokens: 800,
   retries: 3,
 };
@@ -19,33 +19,64 @@ export const buildContactPrompt = (timestamp?: string) => `
 Generate a UNIQUE, realistic business contact with RICH CONTEXT for CRM analysis.
 Must be fictional — do not use real persons or companies.
 
-UNIQUENESS REQUIREMENT:
-- Use DIVERSE names from various cultures (Irish, Japanese, Indian, Nordic, Hispanic, African, etc.)
-- Avoid common names like "John", "Sarah", "Michael", "Emily"
-- Creative company names (e.g., "Quantum Forge Labs", "Nexus Data Partners", "Crimson Wave Analytics")
-- Varied domains (.io, .ai, .tech, .co, .com)
-- Every contact must be COMPLETELY different
+CRITICAL UNIQUENESS RULES:
+- NEVER repeat first names from previous generations (avoid: Kaito, Ethan, Alexander, Liam, etc.)
+- Mix first and last names from DIFFERENT cultures (e.g., Irish first + Indian last, African first + Nordic last)
+- Use uncommon names from diverse origins:
+  * Irish: Saoirse, Niamh, Cillian, Oisín, Róisín
+  * Japanese: Haruki, Yuki, Ren, Sakura, Aiko
+  * Indian: Priya, Arjun, Kavya, Rohan, Ananya
+  * Nordic: Astrid, Bjorn, Freya, Lars, Ingrid
+  * Hispanic: Mateo, Lucia, Diego, Camila, Santiago
+  * African: Amara, Kofi, Zuri, Kwame, Nia
+  * Arabic: Layla, Omar, Zara, Rashid, Amina
+  * Slavic: Katya, Dimitri, Nadia, Viktor, Anya
+  * Korean: Min-jun, Ji-woo, Seo-yun, Tae-yang
+  * Vietnamese: Linh, Minh, Tuan, Hoa, Duc
+- Mix cultures creatively: "Saoirse Nakamura", "Arjun Sørensen", "Zuri O'Brien", "Min-jun García"
+- Company names: avoid "Tech", "Solutions", "Labs" repetition
+- Vary domains: .io, .ai, .tech, .co, .com, .dev, .ventures, .capital, .group, .global
 
 ${timestamp ? `Generation context: ${timestamp}` : ''}
 
+ROLE DISTRIBUTION (IMPORTANT):
+- 10% C-Level: CEO, CTO, CFO, COO, CMO
+- 20% VP/Director: VP of Sales, Director of Marketing, VP of Engineering, Director of Operations
+- 30% Manager: Product Manager, Sales Manager, Marketing Manager, Engineering Manager, Account Manager
+- 40% Individual Contributor / Personal Contacts:
+  * Sales Rep, Account Executive, Software Engineer, Data Analyst, Marketing Specialist
+  * Business contacts: Consultant, Advisor, Investor, Partner
+  * Personal acquaintances: Former colleague, Industry contact, Conference connection, Mentor
+
 Return ONLY valid JSON:
 {
-  "firstName": "unique first name",
-  "lastName": "unique last name",
-  "company": "creative company name (2-4 words)",
+  "firstName": "unique uncommon first name",
+  "lastName": "unique last name (different culture than first name)",
+  "company": "creative company name (avoid overused suffixes)",
   "companyDomain": "domain based on company name",
-  "role": "specific job title (CEO, VP of Sales, CTO, Product Manager, CFO, etc.)",
-  "industry": "specific industry (FinTech, HealthTech, CleanTech, AI/ML, SaaS, etc.)",
+  "role": "realistic job title (90% NOT C-level - see distribution above)",
+  "industry": "specific industry (FinTech, HealthTech, CleanTech, AI/ML, SaaS, E-commerce, PropTech, EdTech, etc.)",
   "email": "firstname.lastname@companyDomain (lowercase)",
 
-  "notes": "Structured business context in natural text format. Include:
-- Communication style (e.g., 'Formal communicator, prefers email over calls, responds within 24h')
-- Business pain points for their role (e.g., 'Struggling with team scalability, needs better analytics tools')
-- Current projects (e.g., 'Working on Q1 2025 digital transformation initiative (high priority, in progress). Leading customer retention program (medium priority, planning stage)')
-- Key associates (e.g., 'Works closely with CFO David Chen and reports to CEO Maria Rodriguez')
-- Blockers if any (e.g., 'Waiting for budget approval, understaffed engineering team')
-- Opportunities (e.g., 'Potential for enterprise license upsell, interested in AI integration')
-Make it 3-5 sentences, natural and readable",
+  "notes": "Structured business context in natural text format. Adapt to role level:
+
+FOR C-LEVEL/VPs (10-20%):
+- Communication style, strategic pain points (e.g., 'board pressure, market competition')
+- High-level projects with associates and blockers
+- Big opportunities (partnerships, funding, M&A)
+
+FOR MANAGERS (30%):
+- Communication style, operational pain points (e.g., 'team coordination, resource allocation')
+- Department projects, reports to VP/Director, works with peers
+- Process improvements, tool evaluations
+
+FOR INDIVIDUAL CONTRIBUTORS / PERSONAL CONTACTS (40-50%):
+- Casual communication style, hands-on challenges (e.g., 'learning new stack, tight deadlines')
+- Day-to-day work, reports to manager, collaborates with team
+- For personal contacts: how you know them (e.g., 'Met at TechCrunch 2024, former colleague at Acme Corp, mentor from MBA program')
+- Lighter context, focus on relationship and common interests
+
+Make it 3-5 sentences, natural and conversational",
 
   "personalNotes": "Personal context in natural text (include 60% of time, null for 40%). Include when relevant:
 - Birthday/age (e.g., 'Birthday March 15, recently turned 42')

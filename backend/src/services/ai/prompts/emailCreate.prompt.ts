@@ -1,26 +1,44 @@
 import { ChatOptions } from '../ai.interface';
 
-export const EMAIL_GENERATION_SYSTEM_PROMPT = `You are generating realistic business emails for CRM sentiment analysis and risk detection.
+export const EMAIL_GENERATION_SYSTEM_PROMPT = `You are a professional AI generating realistic **business emails** for CRM **sentiment analysis** and **risk detection**.
 
-Your goal:
-- Create emails with VARIED EMOTIONAL TONES (positive, neutral, negative, frustrated, urgent)
-- Include actionable items (callbacks, meetings, deadlines, follow-ups)
-- Sometimes include risk indicators (complaints, delays, budget concerns, escalations)
+### OBJECTIVE
+Simulate authentic professional communication:
+- Vary emotional tones (positive, neutral, mildly negative, negative, very negative)
+- Include actionable elements (meetings, follow-ups, reports, approvals)
+- Use realistic business context (projects, blockers, budgets, deadlines)
 - Reflect sender's personality and communication style from their profile
-- Use business context (projects, blockers, associates) naturally
+- Avoid AI-style repetitive phrasing
 
-IMPORTANT: Email sentiment distribution should be realistic:
-- 60% Neutral/Positive (routine business)
-- 25% Mildly Negative (concerns, delays, pushback)
-- 10% Negative (complaints, frustrations, risks)
-- 5% Very Negative (escalations, threats to cancel, HR issues)
+### SENTIMENT DISTRIBUTION
+- **60%** Neutral/Positive — routine business communication
+- **25%** Mildly Negative — delays, gentle pushback, concerns
+- **10%** Negative — complaints, friction, missed deadlines
+- **5%** Very Negative — escalations, HR/legal issues, threats to cancel
 
-Always return valid JSON matching Microsoft Graph Message schema.`;
+### RISK INDICATORS (when negative)
+Keywords: "complaint", "disappointed", "unacceptable", "escalate", "cancel", "refund", "breach of contract", "HR issue", "urgent", "ASAP"
+
+### OUTPUT FORMAT
+Return ONLY valid JSON matching Microsoft Graph Message schema:
+{
+  "id": "unique-guid",
+  "subject": "reflect sentiment in subject",
+  "body": {"contentType": "HTML", "content": "HTML body with <p>, <strong> tags"},
+  "bodyPreview": "1-2 sentence preview",
+  "toRecipients": [{"emailAddress": {"name": "Client Representative", "address": "you@yourcompany.com"}}],
+  "ccRecipients": [], "bccRecipients": [], "replyTo": [],
+  "sentDateTime": "ISO 8601 timestamp", "receivedDateTime": "ISO 8601 timestamp",
+  "internetMessageId": "<unique-id@domain.com>",
+  "hasAttachments": false, "isRead": false,
+  "webLink": "https://outlook.office365.com/mail/inbox/id/AAMkAGI2TG93AAA=",
+  "singleValueExtendedProperties": []
+}`;
 
 export const EMAIL_OPTIONS: ChatOptions = {
   systemPrompt: EMAIL_GENERATION_SYSTEM_PROMPT,
   format: 'json',
-  temperature: 0.95,
+  temperature: 0.9,
   maxTokens: 1200,
   retries: 3,
 };
@@ -48,149 +66,110 @@ export const buildEmailPrompt = (context: {
   const { contact, previousEmails } = context;
 
   return `
-Generate a realistic business email from this contact FOR CRM SENTIMENT ANALYSIS.
+### TASK
+Generate realistic business email for CRM sentiment analysis.
 
-SENDER INFORMATION:
-- Name: ${contact.firstName} ${contact.lastName}
-- Email: ${contact.email}
-- Company: ${contact.company}${contact.companyDomain ? ` (${contact.companyDomain})` : ''}
-- Role: ${contact.role}
-- Industry: ${contact.industry}
-${contact.notes ? `- Business characteristics: ${contact.notes}` : ''}
-${contact.personalNotes ? `- Personal context: ${contact.personalNotes}` : ''}
-${contact.businessContext ? `- Current projects: ${JSON.stringify(contact.businessContext.projects || [])}` : ''}
-${contact.businessContext?.blockers?.length ? `- Current blockers: ${contact.businessContext.blockers.join(', ')}` : ''}
-${contact.communicationPreferences ? `- Communication style: ${contact.communicationPreferences.tone}, prefers ${contact.communicationPreferences.preferredChannel}` : ''}
+### SENDER PROFILE
+- **Name**: ${contact.firstName} ${contact.lastName}
+- **Email**: ${contact.email}
+- **Company**: ${contact.company}${contact.companyDomain ? ` (${contact.companyDomain})` : ''}
+- **Role**: ${contact.role}
+- **Industry**: ${contact.industry}
+${contact.notes ? `- **Notes**: ${contact.notes}` : ''}
+${contact.personalNotes ? `- **Personal**: ${contact.personalNotes}` : ''}
+${contact.businessContext ? `- **Projects**: ${JSON.stringify(contact.businessContext.projects || [])}` : ''}
+${contact.businessContext?.blockers?.length ? `- **Blockers**: ${contact.businessContext.blockers.join(', ')}` : ''}
+${contact.communicationPreferences ? `- **Tone**: ${contact.communicationPreferences.tone}, prefers ${contact.communicationPreferences.preferredChannel}` : ''}
 
-  ${
+${
     previousEmails.length > 0
       ? `
-  PREVIOUS EMAIL HISTORY FROM THIS CONTACT:
-  ${previousEmails
-    .map(
-      (email, i) => `
-  ${i + 1}. Date: ${email.sentDateTime?.toISOString().split('T')[0] || 'Unknown'}
-     Subject: ${email.subject}
-     Preview: ${email.bodyPreview || 'N/A'}
-  `
-    )
-    .join('\n')}
+### PREVIOUS EMAILS (${previousEmails.length})
+${previousEmails.map((e, i) => `${i + 1}. ${e.sentDateTime?.toISOString().split('T')[0]} - ${e.subject}: ${e.bodyPreview || 'N/A'}`).join('\n')}
 
-INSTRUCTIONS:
-- Continue conversation from previous emails OR start new topic
-- Reference projects, blockers, or associates if relevant
-- Match sender's communication style (tone, formality)
-- Vary emotional tone based on realistic business scenarios
+### FOLLOW-UP SCENARIOS (pick based on history)
+**Positive history**: Follow-up on action item, new development, meeting recap, delivering promised item
+**Negative history**: Still waiting (mild frustration), escalating concern, formal follow-up, final notice
+**New topic** (20%): Unrelated request, separate project
+
+**Relationship progression**: Early (1-2): professional → Mid (3-5): familiar → Later (6+): warm OR frustrated
+**Sentiment evolution**: Positive → stay positive OR add concern | Negative → resolve OR escalate
+
+**Reference context**: "As mentioned...", "Following up on...", "I haven't heard back...", "Thanks for your response..."
 `
     : `
-INSTRUCTIONS - FIRST EMAIL (choose scenario):
+### SCENARIOS (60% Positive/Neutral, 25% Mild Negative, 10% Negative, 5% Very Negative)
 
-SCENARIO DISTRIBUTION:
-Pick ONE scenario with these probabilities:
+**POSITIVE/NEUTRAL**: Introduction after meeting, deliverables, progress update, quick question, thank you, FYI, congratulations, resource sharing
 
-POSITIVE/NEUTRAL (60%):
-1. "Introduction after meeting" - Warm follow-up
-2. "Sending deliverables" - Sharing promised materials
-3. "Progress update" - Positive project status
-4. "Meeting invitation" - Google Meet link for collaboration
-5. "Quick question" - Simple request or clarification
-6. "Thank you note" - Appreciation for help/service
+**MILD NEGATIVE**: Delayed response apology, extension request, gentle pushback, status check with concern, budget concerns, resource shortage
 
-MILDLY NEGATIVE (25%):
-7. "Delayed response apology" - Sorry for late reply, explain blocker
-8. "Request for extension" - Need more time due to blocker
-9. "Gentle pushback" - Concerns about timeline/budget/scope
-10. "Status check with concern" - Following up on delayed item
-11. "Budget concerns" - Questioning costs or requesting discount
-12. "Resource shortage" - Can't meet deadline, need help
+**NEGATIVE**: Formal complaint, escalation, deadline missed, quality issues, miscommunication
 
-NEGATIVE (10%):
-13. "Formal complaint" - Issue with product/service/team
-14. "Escalation" - Problem not resolved, escalating to manager
-15. "Deadline missed" - Frustrated about delays impacting business
-16. "Quality issues" - Disappointed with deliverable quality
-17. "Miscommunication fallout" - Frustrated about misunderstanding
-
-VERY NEGATIVE (5%):
-18. "Threatening to cancel" - Considering ending contract/relationship
-19. "HR concern" - Inappropriate behavior or policy violation
-20. "Legal risk" - Mentioning lawyers, contracts, liability
-21. "Public reputation risk" - Threatening social media/review
-
-RISK INDICATORS TO INCLUDE (when negative):
-- Keywords: "complaint", "disappointed", "unacceptable", "escalate", "cancel", "refund"
-- "need to speak with your manager"
-- "this is not what we agreed"
-- "considering other options"
-- "breach of contract"
-- "HR issue", "inappropriate", "harassment"
-- Urgent language: "URGENT", "ASAP", "immediately"
-
-ACTIONABLE ITEMS TO INCLUDE (vary):
-- "Can you call me tomorrow at 2pm?"
-- "Let's schedule a meeting: https://meet.google.com/abc-defg-hij"
-- "Please send the report by Friday"
-- "I need your decision by EOD"
-- "Follow up with [associate name] about [project]"
-- "Review the attached contract and sign by [date]"
-
+**VERY NEGATIVE**: Threatening to cancel, HR concern, legal risk, public reputation risk
 `
 }
 
-RECIPIENT (you are writing TO):
-- Name: Client Representative
-- Email: you@yourcompany.com
+### ACTIONS (0-2 per email, 10% have none)
+- **30% Meeting**: "Available for call Tuesday 3pm?", "Let's schedule video chat", "I'll send calendar invite" (**10%** include meet link)
+- **30% Documents**: "Send report by Friday", "Share latest numbers", "Review attached by [date]"
+- **20% Decisions**: "Need decision by EOW", "Approve budget by Thursday?"
+- **20% Follow-ups**: "Checking in on...", "Any updates on...?"
+- **10% No action** (FYI only)
 
-SENTIMENT REQUIREMENTS:
-- Choose email sentiment based on scenario distribution above
-- Negative emails should have CLEAR indicators: tone, word choice, explicit complaints
-- Include frustration markers: "Unfortunately", "I'm disappointed", "This is unacceptable"
-- Positive emails should be warm but professional
-- Neutral emails are routine business
+### PERSONAL CONTEXT (30% of emails)
+Use sender's **personalNotes** naturally: birthday, family, hobbies, life events, time preferences.
+Examples: "P.S. Hope Emma enjoyed her birthday!", "I know you prefer morning calls, so..."
 
-ACTION EXTRACTION REQUIREMENTS:
-Include at least 1-2 of these:
-- Explicit callback request with time
-- Meeting invitation with Google Meet link
-- Deadline or due date
-- Follow-up task
-- Decision request
-- Document to review/sign
+### WRITING STYLE (CRITICAL - AVOID REPETITION)
 
-Return ONLY valid JSON:
+**OPENINGS** (pick one):
+- 20% Formal: "I hope this finds you well"
+- 40% Direct: Jump to business ("Quick update on...", "Following up on...", "Regarding...")
+- 25% Warm: "Hope you had great weekend!"
+- 10% Time-sensitive: "Quick question before EOD"
+- 5% None
+
+**AVOID REPETITION**:
+- Max 20% "I hope this email finds you well"
+- Don't overuse "I wanted to follow up" → use: **"Circling back"**, **"Quick update"**, **"Checking in"**, **"Per our discussion"**, **"Regarding"**, **"Touching base"**
+
+**STRUCTURE**:
+- 40% Traditional: opening → body → CTA → closing
+- 30% Direct: jump to content
+- 15% Bulleted: brief intro → bullet points → CTA
+- 10% Question-first: start with question → context
+- 5% Very brief: 2-3 sentences
+
+**SENTENCES**: Mix short (5-10 words) and long (20-30 words). Vary paragraphs (1-4 sentences). Use bullet points occasionally.
+
+**CLOSINGS** (vary):
+- 25% "Looking forward"
+- 20% "Thanks" / "Thanks in advance"
+- 15% "Let me know"
+- 15% Casual: "Talk soon", "Best"
+- 15% Action: "I'll follow up next week"
+- 10% None
+
+---
+
+### OUTPUT FORMAT (CRITICAL)
+Return ONLY valid JSON. No text before or after. Start with { and end with }.
+
 {
   "id": "unique-guid",
-  "subject": "email subject (reflect sentiment - urgent/neutral/positive)",
-  "body": {
-    "contentType": "HTML",
-    "content": "full email body in HTML - include <p> tags, <strong> for emphasis, etc."
-  },
-  "bodyPreview": "1-2 sentence preview reflecting email tone",
-  "toRecipients": [
-    {
-      "emailAddress": {
-        "name": "Client Name",
-        "address": "you@yourcompany.com"
-      }
-    }
-  ],
-  "ccRecipients": [],
-  "bccRecipients": [],
-  "replyTo": [],
-  "sentDateTime": "ISO 8601 timestamp (recent, realistic)",
-  "receivedDateTime": "ISO 8601 timestamp (same as sentDateTime or slightly after)",
+  "subject": "reflect sentiment in subject",
+  "body": {"contentType": "HTML", "content": "HTML body with <p>, <strong> tags"},
+  "bodyPreview": "1-2 sentence preview",
+  "toRecipients": [{"emailAddress": {"name": "Client Representative", "address": "you@yourcompany.com"}}],
+  "ccRecipients": [], "bccRecipients": [], "replyTo": [],
+  "sentDateTime": "ISO 8601 timestamp", "receivedDateTime": "ISO 8601 timestamp",
   "internetMessageId": "<unique-id@${contact.companyDomain || 'example.com'}>",
-  "hasAttachments": false,
-  "isRead": false,
+  "hasAttachments": false, "isRead": false,
   "webLink": "https://outlook.office365.com/mail/inbox/id/AAMkAGI2TG93AAA=",
   "singleValueExtendedProperties": []
 }
 
-IMPORTANT:
-- Return ONLY the JSON
-- Match sender's tone from their profile
-- Include realistic sentiment variety
-- Add clear action items
-- Use risk keywords when appropriate
+Match sender's tone. Vary openings/closings/structure. Use risk keywords when negative. Include personal context (30%).
 `;
 };
