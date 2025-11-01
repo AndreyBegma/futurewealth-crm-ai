@@ -1,9 +1,12 @@
-import { contactQueue, emailQueue } from '@/queues';
+import { Job } from 'bullmq';
+
+import { contactQueue, emailQueue, emailAnalysisQueue } from '@/queues';
 import { getWorkers as getQueueWorkers } from '@/queues/workers';
 
 const queues = {
   contact: contactQueue,
   email: emailQueue,
+  emailAnalysis: emailAnalysisQueue,
 };
 
 class QueueService {
@@ -26,10 +29,11 @@ class QueueService {
 
   async getWorkersStatus() {
     const workersStatus: any = {};
-    const { contact, email } = getQueueWorkers();
+    const { contact, email, emailAnalysis } = getQueueWorkers();
     const activeWorkers = {
       contact,
       email,
+      emailAnalysis,
     };
 
     for (const [name, worker] of Object.entries(activeWorkers)) {
@@ -55,7 +59,7 @@ class QueueService {
 
     const jobs = await queue.getJobs(status as any, 0, limit - 1);
 
-    return jobs.map((job) => ({
+    return jobs.map((job: Job) => ({
       id: job.id,
       name: job.name,
       data: job.data,
@@ -78,6 +82,7 @@ class QueueService {
     return {
       contact: workers.contact,
       email: workers.email,
+      emailAnalysis: workers.emailAnalysis,
     };
   }
 }

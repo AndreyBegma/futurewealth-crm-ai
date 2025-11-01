@@ -21,6 +21,17 @@ class RecivedEmailRepository {
     });
   }
 
+  async findPendingAnalysis(limit = 100) {
+    return await prisma.receivedEmail.findMany({
+      where: {
+        hasAnalysis: false,
+        NOT: { processingStatus: ProcessingStatus.PROCESSING },
+      },
+      orderBy: { receivedDateTime: 'asc' },
+      take: limit,
+    });
+  }
+
   async create(data: ReceivedEmail) {
     try {
       return await prisma.receivedEmail.create({ data });

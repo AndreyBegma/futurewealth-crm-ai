@@ -1,5 +1,5 @@
-import { contactQueue, emailQueue } from './queues';
+import { contactQueue, emailQueue, emailAnalysisQueue } from './queues';
 import './workers';
 import './schedulers';
 
-export { contactQueue, emailQueue };
+export { contactQueue, emailQueue, emailAnalysisQueue };

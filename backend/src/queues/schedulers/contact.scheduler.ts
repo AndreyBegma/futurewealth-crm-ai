@@ -13,6 +13,7 @@ const contactScheduler = new CronJob(
     };
 
     await contactQueue.add('generate-contact', jobData);
+    return true;
   }),
   null,
   false,

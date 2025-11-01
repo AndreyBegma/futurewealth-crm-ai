@@ -24,6 +24,7 @@ const emailScheduler = new CronJob(
     };
 
     await emailQueue.add('generate-email', jobData);
+    return true;
   }),
   null,
   false,

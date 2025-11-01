@@ -46,6 +46,31 @@ enum ProcessingStatus {
   FAILED
 }
 
+enum RoutingRuleType {
+  KEYWORD
+  EMAIL
+  FULL_NAME
+}
+
+enum RoutingMatchMode {
+  EXACT
+  CONTAINS
+  REGEX
+}
+
+enum RoutingAction {
+  SENTIMENT_ONLY
+  SUMMARISE
+}
+
+enum RedactionEntityType {
+  EMAIL
+  NAME
+  COMPANY
+  PHONE
+  OTHER
+}
+
 model EmailThread {
   id                String   @id @default(cuid())
   accountId         String
@@ -62,6 +87,8 @@ model EmailThread {
 
   account  Account         @relation(fields: [accountId], references: [id])
   messages ReceivedEmail[]
+  insights AccountInsight[]
+  sentimentFacts SentimentFact[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -88,6 +115,8 @@ model Account {
 
   emails  ReceivedEmail[]
   threads EmailThread[]
+  insights AccountInsight[]
+  sentimentFacts SentimentFact[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -130,6 +159,7 @@ model ReceivedEmail {
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   EmailSpamCheck EmailSpamCheck[]
+  sentimentFacts SentimentFact[]
 
   @@index([receivedDateTime])
   @@index([processingStatus])
@@ -166,4 +196,75 @@ model QueueConfig {
   updatedAt DateTime @updatedAt
 
   @@map("queue_configs")
+}
+
+model RedactionAlias {
+  id          String               @id @default(uuid())
+  placeholder String               @unique
+  entityType  RedactionEntityType
+  realValue   String
+  hash        String?
+  scope       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([entityType])
+  @@index([hash, entityType, scope])
+  @@map("redaction_aliases")
+}
+
+model AccountInsight {
+  id        String   @id @default(uuid())
+  accountId String
+  threadId  String?
+  payload   Json
+
+  createdAt DateTime @default(now())
+
+  account Account   @relation(fields: [accountId], references: [id])
+  thread  EmailThread? @relation(fields: [threadId], references: [id])
+
+  @@index([accountId])
+  @@index([threadId])
+  @@map("account_insights")
+}
+
+model SentimentFact {
+  id         String   @id @default(uuid())
+  accountId  String
+  threadId   String?
+  emailId    String?
+  overall    String
+  score      Float
+  confidence Float
+  riskTags   Json
+  capturedAt DateTime @default(now())
+
+  account Account   @relation(fields: [accountId], references: [id])
+  thread  EmailThread? @relation(fields: [threadId], references: [id])
+  email   ReceivedEmail? @relation(fields: [emailId], references: [id])
+
+  @@index([accountId])
+  @@index([threadId])
+  @@index([emailId])
+  @@map("sentiment_facts")
+}
+
+model RoutingPolicyRule {
+  id        String           @id @default(uuid())
+  type      RoutingRuleType
+  action    RoutingAction
+  value     String
+  matchMode RoutingMatchMode @default(EXACT)
+  enabled   Boolean          @default(true)
+  notes     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+
+  @@index([type])
+  @@index([enabled])
+  @@map("routing_policy_rules")
 }
