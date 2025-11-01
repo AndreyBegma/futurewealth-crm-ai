@@ -43,6 +43,7 @@ export const bull = {
   maxJobsPerMinute: Number(process.env.MAX_JOBS_PER_MINUTE) || 1,
   contactGenerationCron: process.env.CONTACT_GENERATION_CRON || '*/30 * * * *',
   emailGenerationCron: process.env.EMAIL_GENERATION_CRON || '*/10 * * * *',
+  emailAnalysisCron: process.env.EMAIL_ANALYSIS_CRON || '*/5 * * * *',
   workerConcurrency: Number(process.env.WORKER_CONCURRENCY) || 1,
   jobAttempts: Number(process.env.JOB_ATTEMPTS) || 3,
   jobBackoffDelay: Number(process.env.JOB_BACKOFF_DELAY) || 5000,

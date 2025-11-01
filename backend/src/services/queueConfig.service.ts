@@ -1,12 +1,22 @@
 import queueConfigRepository from '@/repositories/queueConfig.repository';
 import redisService from '@/services/redis.service';
+import { bull } from '@/config/config';
 
 class QueueConfigService {
   private readonly CACHE_PREFIX = 'queue:config:';
   private readonly CACHE_TTL = 60;
+  private readonly DEFAULT_CRON: Record<string, string> = {
+    'contact-generation': bull.contactGenerationCron,
+    'email-generation': bull.emailGenerationCron,
+    'email-analysis': bull.emailAnalysisCron,
+  };
 
   private getCacheKey(queueName: string): string {
     return `${this.CACHE_PREFIX}${queueName}`;
+  }
+
+  private getDefaultCron(queueName: string) {
+    return this.DEFAULT_CRON[queueName];
   }
 
   private async invalidateCache(queueName: string) {
@@ -41,7 +51,7 @@ class QueueConfigService {
     if (!config) {
       config = await queueConfigRepository.upsert(queueName, {
         enabled: false,
-        cronPattern: '*/5 * * * *',
+        cronPattern: this.getDefaultCron(queueName),
         concurrency: 1,
         maxJobsPerMin: 10,
       });

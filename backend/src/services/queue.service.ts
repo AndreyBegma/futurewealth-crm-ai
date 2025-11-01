@@ -1,14 +1,9 @@
 import { contactQueue, emailQueue } from '@/queues';
-import { contactWorker, emailWorker } from '@/queues/workers';
+import { getWorkers as getQueueWorkers } from '@/queues/workers';
 
 const queues = {
   contact: contactQueue,
   email: emailQueue,
-};
-
-const workers = {
-  contact: contactWorker,
-  email: emailWorker,
 };
 
 class QueueService {
@@ -31,8 +26,13 @@ class QueueService {
 
   async getWorkersStatus() {
     const workersStatus: any = {};
+    const { contact, email } = getQueueWorkers();
+    const activeWorkers = {
+      contact,
+      email,
+    };
 
-    for (const [name, worker] of Object.entries(workers)) {
+    for (const [name, worker] of Object.entries(activeWorkers)) {
       workersStatus[name] = {
         isRunning: worker.isRunning(),
         isPaused: await worker.isPaused(),
@@ -74,7 +74,11 @@ class QueueService {
   }
 
   getWorkers() {
-    return workers;
+    const workers = getQueueWorkers();
+    return {
+      contact: workers.contact,
+      email: workers.email,
+    };
   }
 }
 

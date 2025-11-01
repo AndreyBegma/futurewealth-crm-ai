@@ -16,6 +16,10 @@ class SchedulerInitializer {
       name: 'email-generation',
       defaultCronPattern: bull.emailGenerationCron,
     },
+    {
+      name: 'email-analysis',
+      defaultCronPattern: bull.emailAnalysisCron,
+    },
   ];
 
   async ensureQueueConfigs() {

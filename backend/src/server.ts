@@ -11,10 +11,13 @@ import corsOptions from '@config/cors';
 import { v1Router } from './routes';
 import RedisConfig from './config/redis';
 import prisma from './config/database';
+import queueConfigService from './services/queueConfig.service';
+import { CronTime } from 'cron';
 
 import { contactScheduler, emailScheduler, SchedulerInitializer } from './queues/schedulers';
-import './queues/workers';
+import { initializeWorkers } from './queues/workers';
 import { QueueSocketService } from './sockets/queue.socket';
+import emailAnalysisScheduler from './queues/schedulers/emailAnalysis.scheduler';
 
 const startServer = async () => {
   try {
@@ -24,8 +27,26 @@ const startServer = async () => {
 
     await SchedulerInitializer.ensureQueueConfigs();
 
+    const contactConfig = await queueConfigService.getQueueConfig('contact-generation');
+    if (contactConfig?.cronPattern) {
+      contactScheduler.setTime(new CronTime(contactConfig.cronPattern));
+    }
+
+    const emailConfig = await queueConfigService.getQueueConfig('email-generation');
+    if (emailConfig?.cronPattern) {
+      emailScheduler.setTime(new CronTime(emailConfig.cronPattern));
+    }
+
+    const emailAnalysisConfig = await queueConfigService.getQueueConfig('email-analysis');
+    if (emailAnalysisConfig?.cronPattern) {
+      emailAnalysisScheduler.setTime(new CronTime(emailAnalysisConfig.cronPattern));
+    }
+
+    await initializeWorkers();
+
     contactScheduler.start();
     emailScheduler.start();
+    emailAnalysisScheduler.start();
     console.log('[Schedulers] Contact and Email schedulers started');
 
     prisma

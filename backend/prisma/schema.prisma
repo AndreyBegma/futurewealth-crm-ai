@@ -39,12 +39,69 @@ model FakePerson {
   @@map("fake_persons")
 }
 
+enum ProcessingStatus {
+  NONE
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model EmailThread {
+  id                String   @id @default(cuid())
+  accountId         String
+  normalizedSubject String
+  conversationId    String?  @unique
+  messageCount      Int      @default(0)
+  firstMessageAt    DateTime
+  lastMessageAt     DateTime
+
+  summary      String? @db.Text
+  actions      Json?
+  topicTags    Json?
+  hasAISummary Boolean @default(false)
+
+  account  Account         @relation(fields: [accountId], references: [id])
+  messages ReceivedEmail[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([accountId])
+  @@index([accountId, normalizedSubject])
+  @@map("email_threads")
+}
+
+model Account {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String?
+  company      String?
+  totalEmails  Int       @default(0)
+  threadCount  Int       @default(0)
+  firstEmailAt DateTime?
+  lastEmailAt  DateTime?
+
+  personal       Json?
+  business       Json?
+  sentimentTrend Json?
+  hasAIProfile   Boolean @default(false)
+
+  emails  ReceivedEmail[]
+  threads EmailThread[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@map("accounts")
+}
+
 model ReceivedEmail {
-  id                            String    @id @default(cuid())
+  id                            String           @id @default(cuid())
   subject                       String
   body                          Json
   bodyPreview                   String?
-  from_                         Json      @map("from")
+  from_                         Json             @map("from")
   sender                        Json?
   toRecipients                  Json
   ccRecipients                  Json?
@@ -52,18 +109,32 @@ model ReceivedEmail {
   replyTo                       Json?
   sentDateTime                  DateTime?
   receivedDateTime              DateTime?
-  internetMessageId             String?   @unique
-  hasAttachments                Boolean   @default(false)
-  isRead                        Boolean   @default(false)
+  internetMessageId             String?          @unique
+  hasAttachments                Boolean          @default(false)
+  isRead                        Boolean          @default(false)
   webLink                       String?
   singleValueExtendedProperties Json?
   rawResponse                   Json?
+  processingStatus              ProcessingStatus @default(NONE)
+  accountId                     String?
+  threadId                      String?
+  hasAccount                    Boolean          @default(false)
+  hasThread                     Boolean          @default(false)
+  hasAnalysis                   Boolean          @default(false)
+  processedAt                   DateTime?
+  analyzedAt                    DateTime?
+
+  account Account?     @relation(fields: [accountId], references: [id])
+  thread  EmailThread? @relation(fields: [threadId], references: [id])
 
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   EmailSpamCheck EmailSpamCheck[]
 
   @@index([receivedDateTime])
+  @@index([processingStatus])
+  @@index([accountId])
+  @@index([threadId])
   @@index([sentDateTime])
   @@map("received_emails")
 }
@@ -86,6 +157,7 @@ model QueueConfig {
   id        String  @id @default(uuid())
   queueName String  @unique
   enabled   Boolean @default(false)
+  cronPattern String?
 
   concurrency   Int @default(1)
   maxJobsPerMin Int @default(10)

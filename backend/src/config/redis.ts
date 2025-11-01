@@ -6,7 +6,7 @@ class RedisConfig {
 
   static getClient(): Redis {
     if (!this.instance) {
-      this.instance = new Redis({
+      const client = new Redis({
         host: redis.host,
         port: Number(redis.port),
         maxRetriesPerRequest: null,
@@ -15,14 +15,17 @@ class RedisConfig {
           return delay;
         },
       });
+
+      client.on('connect', () => {
+        console.log('Redis connected');
+      });
+      client.on('error', (err) => {
+        console.error(err);
+      });
+
+      this.instance = client;
     }
 
-    this.instance.on('connect', () => {
-      console.log('Redis connected');
-    });
-    this.instance.on('error', (err) => {
-      console.error(err);
-    });
     return this.instance;
   }
 }

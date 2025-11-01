@@ -16,7 +16,7 @@ class QueueConfigRepository {
       create: {
         queueName,
         enabled: data.enabled ?? false,
-        cronPattern: data.cronPattern ?? '*/5 * * * *',
+        cronPattern: data.cronPattern,
         concurrency: data.concurrency ?? 1,
         maxJobsPerMin: data.maxJobsPerMin ?? 10,
       },
@@ -31,7 +31,6 @@ class QueueConfigRepository {
     if (!config) {
       config = await this.upsert(queueName, {
         enabled: false,
-        cronPattern: '*/5 * * * *',
         concurrency: 1,
         maxJobsPerMin: 10,
       });
