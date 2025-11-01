@@ -96,3 +96,31 @@ export const mapReceivedEmailToPipelineMessage = (
   };
 };
 
+const extractRecipientNames = (value: any) => {
+  if (!Array.isArray(value)) {
+    return [] as string[];
+  }
+
+  return value
+    .map((recipient) => getEmailAddress(recipient).name.trim())
+    .filter((item) => item.length > 0);
+};
+
+export const collectParticipantNames = (emails: ReceivedEmailLike[]) => {
+  const names = new Set<string>();
+
+  for (const email of emails) {
+    const fromName = getEmailAddress(email.from_).name.trim();
+    if (fromName) {
+      names.add(fromName);
+    }
+
+    extractRecipientNames(email.toRecipients).forEach((name) => names.add(name));
+    extractRecipientNames(email.ccRecipients).forEach((name) => names.add(name));
+  }
+
+  return Array.from(names);
+};
+
+export { extractBody, formatEmailAddress, getEmailAddress, extractRecipients };
+

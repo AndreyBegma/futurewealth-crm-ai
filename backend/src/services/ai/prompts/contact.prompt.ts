@@ -35,7 +35,18 @@ CRITICAL UNIQUENESS RULES:
   * Vietnamese: Linh, Minh, Tuan, Hoa, Duc
 - Mix cultures creatively: "Saoirse Nakamura", "Arjun Sørensen", "Zuri O'Brien", "Min-jun García"
 - Company names: avoid "Tech", "Solutions", "Labs" repetition
-- Vary domains: .io, .ai, .tech, .co, .com, .dev, .ventures, .capital, .group, .global
+- Vary domains: .io, .ai, .tech, .co, .com, .dev, .ventures, .capital, .group, .global, .earth, .agency, .finance, .eco, .world
+- Maintain an internal ban list of the last 20 generated first names, last names, and companies; never reuse any of them.
+
+REGION & COMMUNICATION STYLE ROTATION (MANDATORY):
+- Cycle through regions and time zones: North America, LATAM, EMEA, Sub-Saharan Africa, Middle East, South Asia, East Asia, Oceania.
+- Explicitly mention primary working hours and local holidays if relevant.
+- Specify communication style with tone + emoji (e.g., "formal 💼", "warm 😊", "direct ⚡", "reserved ❄️", "playful 😄").
+- State preferred channels (Slack, Teams, WhatsApp, WeChat, Signal, in-person breakfast, etc.).
+
+UNEXPECTED ELEMENTS:
+- Include at least one non-obvious detail such as a niche ecosystem (e.g., "climate-tech hub in Nairobi"), unconventional hobby (ceramic art, freediving, stand-up comedy, urban beekeeping), or alternative networking source (climate accelerators, VR meetups, volunteer initiatives).
+- Describe how you met or the context of the relationship (accelerator cohort, club, DAO, industry retreat, conference panel, hackathon mentor).
 
 ${timestamp ? `Generation context: ${timestamp}` : ''}
 
@@ -76,7 +87,7 @@ FOR INDIVIDUAL CONTRIBUTORS / PERSONAL CONTACTS (40-50%):
 - For personal contacts: how you know them (e.g., 'Met at TechCrunch 2024, former colleague at Acme Corp, mentor from MBA program')
 - Lighter context, focus on relationship and common interests
 
-Make it 3-5 sentences, natural and conversational",
+Make it 3-5 sentences, natural and conversational. Vary sentence length, occasionally include a short quote (e.g., "как он говорит, 'мы строим для людей, не для KPI'"). Every distinct fact must end with a relevant emoji (project 🚀, blocker ⚠️, associate 🤝, opportunity 💡, channel 📡, ecosystem 🌍). When multiple facts are in one sentence, up to three emoji are allowed.",
 
   "personalNotes": "Personal context in natural text (include 60% of time, null for 40%). Include when relevant:
 - Birthday/age (e.g., 'Birthday March 15, recently turned 42')
@@ -85,18 +96,20 @@ Make it 3-5 sentences, natural and conversational",
 - Life events (e.g., 'Recently relocated to Austin, settling in new house')
 - Communication preferences (e.g., 'Early bird, prefers morning meetings before 11am')
 - Topics to avoid (e.g., 'Vegetarian, avoid steakhouse lunches. Don't discuss politics')
-Make it 2-4 sentences, conversational. Examples:
-- 'Birthday March 15. Wife Sarah, two kids Emma (8) and Luke (5). Avid golfer, prefers morning meetings. Vegetarian.'
-- 'Recently relocated to Austin. Has dog named Max. Enjoys hiking. Early bird, best to contact before noon.'
+Make it 2-4 sentences, conversational. Mention personal rituals, local traditions, or community roles when relevant. Every personal fact must end with a fitting emoji (family 👨‍👩‍👧, hobby 🎸, travel ✈️, wellness 🧘, celebration 🎉). Examples:
+- 'Birthday March 15 🎂. Wife Sarah, two kids Emma (8) and Luke (5) 👨‍👩‍👧. Avid golfer, prefers morning meetings 🏌️. Vegetarian 🥦.'
+- 'Recently relocated to Austin 🚚. Has dog named Max 🐕. Enjoys hiking on Barton Creek 🥾. Early bird, best to contact before noon ☀️.'
 - null"
 }
 
 Requirements:
 - MAXIMUM CREATIVITY and diversity
-- notes should include: communication style, 1-3 projects, 1-3 associates, 0-2 blockers, 0-2 opportunities
+- notes should include: communication style, 1-3 projects, 1-3 associates, 0-2 blockers, 0-2 opportunities, networking source, preferred channel, and time-zone context
 - All information in notes should flow naturally as connected text, not bullet points
 - personalNotes should be realistic and varied (60% have them, 40% null)
 - Both notes fields must reflect their actual role and industry
+- Include at least one emoji per fact across notes and personalNotes to assist downstream analytics
+- Ensure every generated contact is globally unique by respecting the ban list and bringing new combinations of cultures, channels, and ecosystems
 - Return ONLY valid JSON, no extra text.
 `;
 

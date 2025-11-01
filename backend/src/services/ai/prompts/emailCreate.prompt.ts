@@ -16,8 +16,12 @@ Simulate authentic professional communication:
 - **10%** Negative — complaints, friction, missed deadlines
 - **5%** Very Negative — escalations, HR/legal issues, threats to cancel
 
+### EMOJI ANNOTATION (CRITICAL)
+- Every action item, update, blocker, milestone, or tone shift must be paired with a relevant emoji (meeting 📅, report 📊, blocker ⚠️, celebration 🎉, legal ⚖️, urgency ⏳, gratitude 🙏, concern 😕, escalation 🚨, positive outcome 🌟).
+- Emotional phrases must carry an emoji that reflects the feeling (optimistic 🙂, uneasy 😬, confident 💪, disappointed 😞).
+
 ### RISK INDICATORS (when negative)
-Keywords: "complaint", "disappointed", "unacceptable", "escalate", "cancel", "refund", "breach of contract", "HR issue", "urgent", "ASAP"
+Keywords: "complaint", "disappointed", "unacceptable", "escalate", "cancel", "refund", "breach of contract", "HR issue", "urgent", "ASAP" — pair each with contextual emoji (e.g., "escalate 🚨", "breach of contract ⚖️").
 
 ### OUTPUT FORMAT
 Return ONLY valid JSON matching Microsoft Graph Message schema:
@@ -100,25 +104,26 @@ ${previousEmails.map((e, i) => `${i + 1}. ${e.sentDateTime?.toISOString().split(
     : `
 ### SCENARIOS (60% Positive/Neutral, 25% Mild Negative, 10% Negative, 5% Very Negative)
 
-**POSITIVE/NEUTRAL**: Introduction after meeting, deliverables, progress update, quick question, thank you, FYI, congratulations, resource sharing
+**POSITIVE/NEUTRAL**: Introduction after meeting, deliverables, progress update, quick question, thank you, FYI, congratulations, resource sharing — mark key outcomes with 🎉/🌟/✅.
 
-**MILD NEGATIVE**: Delayed response apology, extension request, gentle pushback, status check with concern, budget concerns, resource shortage
+**MILD NEGATIVE**: Delayed response apology, extension request, gentle pushback, status check with concern, budget concerns, resource shortage — annotate tension with 😕/😬/⏳.
 
-**NEGATIVE**: Formal complaint, escalation, deadline missed, quality issues, miscommunication
+**NEGATIVE**: Formal complaint, escalation, deadline missed, quality issues, miscommunication — include explicit risk keywords with ⚠️/🚨/🔥.
 
-**VERY NEGATIVE**: Threatening to cancel, HR concern, legal risk, public reputation risk
+**VERY NEGATIVE**: Threatening to cancel, HR concern, legal risk, public reputation risk — emphasize severity with 🚫/⚖️/🛑.
 `
 }
 
 ### ACTIONS (0-2 per email, 10% have none)
-- **30% Meeting**: "Available for call Tuesday 3pm?", "Let's schedule video chat", "I'll send calendar invite" (**10%** include meet link)
-- **30% Documents**: "Send report by Friday", "Share latest numbers", "Review attached by [date]"
-- **20% Decisions**: "Need decision by EOW", "Approve budget by Thursday?"
-- **20% Follow-ups**: "Checking in on...", "Any updates on...?"
-- **10% No action** (FYI only)
+- **30% Meeting**: "Available for call Tuesday 3pm? 📅", "Let's schedule video chat 💻", "I'll send calendar invite 📬" (**10%** include meet link with UTM parameter)
+- **30% Documents**: "Send report by Friday 📊", "Share latest numbers 📈", "Review attached by [date] 🗂️"
+- **20% Decisions**: "Need decision by EOW ✅", "Approve budget by Thursday? 💰"
+- **20% Follow-ups**: "Checking in on... 🔄", "Any updates on...? 👀"
+- **10% No action** (FYI only) — still summarize tone emoji.
+- Include a personal or contextual emoji for any additional action (travel ✈️, celebration 🎉, reminder ⏰).
 
 ### PERSONAL CONTEXT (30% of emails)
-Use sender's **personalNotes** naturally: birthday, family, hobbies, life events, time preferences.
+Use sender's **personalNotes** naturally: birthday, family, hobbies, life events, time preferences. Note time zone relevance and day-of-week context ("before APAC standup ☀️", "Friday afternoon crunch ⏳").
 Examples: "P.S. Hope Emma enjoyed her birthday!", "I know you prefer morning calls, so..."
 
 ### WRITING STYLE (CRITICAL - AVOID REPETITION)
@@ -129,6 +134,13 @@ Examples: "P.S. Hope Emma enjoyed her birthday!", "I know you prefer morning cal
 - 25% Warm: "Hope you had great weekend!"
 - 10% Time-sensitive: "Quick question before EOD"
 - 5% None
+
+Add variety:
+- Rotate greeting register ("Hola", "Buenos días", "Hi there", "Team", emoji-prefixed, etc.).
+- 25% of emails should include a concise P.S. with an extra fact or CTA + emoji.
+- 15% should include a hyperlink with a sample UTM parameter (e.g., "https://example.com/report?utm_source=crm&utm_medium=email" 📎).
+- Alternate between detailed narrative paragraphs and bullet snippets (2-3 markers) to change pacing.
+- Vary closing cadence: sometimes very brief, other times descriptive, occasionally include a forward-looking quote.
 
 **AVOID REPETITION**:
 - Max 20% "I hope this email finds you well"
@@ -151,6 +163,11 @@ Examples: "P.S. Hope Emma enjoyed her birthday!", "I know you prefer morning cal
 - 15% Action: "I'll follow up next week"
 - 10% None
 
+### EMOTIONAL DYNAMICS
+- Keep overall distribution above but allow layered emotions inside a single email (e.g., positive news with subtle concern 😕, or frustration followed by constructive optimism 🙂).
+- Highlight each emotional pivot with an emoji and language that signals the shift.
+- Reference timing pressures (quarter close ⏳, Monday kickoff 🌅, weekend crunch 🛠️) tied to the sender's timezone.
+- Reference the sender's personalNotes when relevant.
 ---
 
 ### OUTPUT FORMAT (CRITICAL)
