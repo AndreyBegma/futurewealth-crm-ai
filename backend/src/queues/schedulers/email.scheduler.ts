@@ -2,6 +2,7 @@ import { CronJob } from 'cron';
 import { emailQueue } from '../queues';
 import { EmailJobType, GenerateEmailJobData } from '../jobs/email.jobs';
 import { bull } from '@/config/config';
+import { createSchedulerJob } from './scheduler.helper';
 
 const getRandomEmailType = (): EmailJobType => {
   const rand = Math.random() * 100;
@@ -15,21 +16,15 @@ const getRandomEmailType = (): EmailJobType => {
 
 const emailScheduler = new CronJob(
   bull.emailGenerationCron,
-  async () => {
-    console.log('[EmailScheduler] Cron job triggered');
-    try {
-      const jobData: GenerateEmailJobData = {
-        type: getRandomEmailType(),
-        triggeredBy: 'cron',
-        timestamp: new Date().toISOString(),
-      };
-      await emailQueue.add('cron-email', jobData, {
-        priority: 1,
-      });
-    } catch (error) {
-      console.log('[EmailScheduler] Cron job failed', error);
-    }
-  },
+  createSchedulerJob('email-generation', async () => {
+    const jobData: GenerateEmailJobData = {
+      type: getRandomEmailType(),
+      triggeredBy: 'cron',
+      timestamp: new Date().toISOString(),
+    };
+
+    await emailQueue.add('generate-email', jobData);
+  }),
   null,
   false,
   'UTC'

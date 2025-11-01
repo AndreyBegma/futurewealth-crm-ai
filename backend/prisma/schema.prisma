@@ -81,3 +81,17 @@ model EmailSpamCheck {
   @@index([emailId])
   @@map("email_spam_checks")
 }
+
+model QueueConfig {
+  id        String  @id @default(uuid())
+  queueName String  @unique
+  enabled   Boolean @default(false)
+
+  concurrency   Int @default(1)
+  maxJobsPerMin Int @default(10)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("queue_configs")
+}

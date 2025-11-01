@@ -25,6 +25,32 @@ class EmailGenerator {
     }
   }
 
+  private parseNotesForContext(notes?: string | null) {
+    if (!notes) return null;
+
+    const projectMatches = notes.match(/Working on|Leading|Managing ([^.]+?)(?:\(|\.)/gi);
+    const blockerMatches = notes.match(/(?:Waiting for|Blocked by|Needs) ([^.]+)/gi);
+
+    return {
+      projects: projectMatches?.map((p) => ({ name: p.trim() })) || [],
+      blockers: blockerMatches?.map((b) => b.trim()) || [],
+    };
+  }
+
+  private parseNotesForCommPrefs(notes?: string | null) {
+    if (!notes) return null;
+
+    const toneMatch = notes.match(/(Formal|Casual|Semi-formal) communicator/i);
+    const channelMatch = notes.match(/prefers (email|calls|video|slack)/i);
+    const responseMatch = notes.match(/responds (within|same-day|24-48h|slow)/i);
+
+    return {
+      tone: toneMatch?.[1]?.toLowerCase() || 'semi-formal',
+      preferredChannel: channelMatch?.[1]?.toLowerCase() || 'email',
+      responseTime: responseMatch?.[1] || 'same-day',
+    };
+  }
+
   private mapToReceivedEmail(spamData: any): ReceivedEmail {
     return {
       id: spamData.id,
@@ -74,12 +100,15 @@ class EmailGenerator {
           contact.email,
           options?.maxHistoryItems || 5
         );
-        previousEmails = emails.map(email => ({
+        previousEmails = emails.map((email) => ({
           subject: email.subject,
           bodyPreview: email.bodyPreview ?? undefined,
           sentDateTime: email.sentDateTime ?? undefined,
         }));
       }
+
+      const parsedBusinessContext = this.parseNotesForContext(contact.notes);
+      const parsedCommPrefs = this.parseNotesForCommPrefs(contact.notes);
 
       const prompt = buildEmailPrompt({
         contact: {
@@ -92,12 +121,20 @@ class EmailGenerator {
           industry: contact.industry,
           notes: contact.notes ?? undefined,
           personalNotes: contact.personalNotes ?? undefined,
+          businessContext: parsedBusinessContext,
+          communicationPreferences: parsedCommPrefs,
         },
         previousEmails,
       });
 
       const aiResponse = await aiService.chat(prompt, EMAIL_OPTIONS);
-      const emailData = JSON.parse(aiResponse);
+
+      const cleanedResponse = aiResponse
+        .replace(/```json\s*/g, '')
+        .replace(/```\s*/g, '')
+        .trim();
+
+      const emailData = JSON.parse(cleanedResponse);
       const prismaData = this.mapToReceivedEmail(emailData);
 
       prismaData.from_ = {
@@ -116,8 +153,6 @@ class EmailGenerator {
       throw error;
     }
   }
-
-
 }
 
 export default new EmailGenerator();

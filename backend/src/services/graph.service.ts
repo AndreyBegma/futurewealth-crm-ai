@@ -12,8 +12,6 @@ class GraphService {
       microsoftGraph.clientId,
       microsoftGraph.clientSecret
     );
-    console.log(microsoftGraph);
-
     this.client = Client.init({
       authProvider: async (done) => {
         try {
@@ -21,7 +19,7 @@ class GraphService {
           console.log('[GraphService] Token obtained:', {
             hasToken: !!token?.token,
             expiresOn: token?.expiresOnTimestamp,
-            scopes: microsoftGraph.scope
+            scopes: microsoftGraph.scope,
           });
           done(null, token?.token || '');
         } catch (err) {
@@ -48,7 +46,7 @@ class GraphService {
         userUpn,
         status: err.statusCode,
         code: err.code,
-        message: err.message
+        message: err.message,
       });
       throw err;
     }
@@ -82,7 +80,7 @@ class GraphService {
       console.error('[GraphService] Error fetching users:', {
         status: err.statusCode,
         code: err.code,
-        message: err.message
+        message: err.message,
       });
       throw err;
     }

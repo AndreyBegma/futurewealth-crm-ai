@@ -9,6 +9,7 @@ class RedisConfig {
       this.instance = new Redis({
         host: redis.host,
         port: Number(redis.port),
+        maxRetriesPerRequest: null,
         retryStrategy: (times) => {
           const delay = Math.min(times * 50, 2000);
           return delay;

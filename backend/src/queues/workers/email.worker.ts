@@ -3,18 +3,23 @@ import { Worker, Job } from 'bullmq';
 import RedisConfig from '@/config/redis';
 import { GenerateEmailJobData, GenerateEmailResult } from '../jobs/email.jobs';
 import { bull } from '@/config/config';
+import emailGenerator from '@/services/ai/generators/email.generator';
 
 const emailWorker = new Worker<GenerateEmailJobData, GenerateEmailResult>(
   'email-generation',
   async (job: Job<GenerateEmailJobData>) => {
-    const { triggeredBy, timestamp, type, contactId } = job.data;
-    console.log(triggeredBy, timestamp, type, contactId);
-    console.log('[EmailWorker] - New Job started');
+    const { type, contactId } = job.data;
+
     try {
+      const generatedEmail =
+        type === 'spam'
+          ? await emailGenerator.generateSpam()
+          : await emailGenerator.generateFromContact({ contactId, includeHistory: true });
+
       return {
         success: true,
-        message: `Email test generated (type: ${type})`,
-        emailId: 'test-email-id',
+        message: `Email generated (type: ${type})`,
+        emailId: generatedEmail.id,
         type,
       };
     } catch (error) {

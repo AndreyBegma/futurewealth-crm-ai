@@ -12,7 +12,9 @@ import { v1Router } from './routes';
 import RedisConfig from './config/redis';
 import prisma from './config/database';
 
-import { contactScheduler, emailScheduler } from './queues/schedulers';
+import { contactScheduler, emailScheduler, SchedulerInitializer } from './queues/schedulers';
+import './queues/workers';
+import { QueueSocketService } from './sockets/queue.socket';
 
 const startServer = async () => {
   try {
@@ -20,9 +22,11 @@ const startServer = async () => {
 
     RedisConfig.getClient();
 
+    await SchedulerInitializer.ensureQueueConfigs();
+
     contactScheduler.start();
     emailScheduler.start();
-    console.log('✅ [Schedulers] Contact and Email schedulers started');
+    console.log('[Schedulers] Contact and Email schedulers started');
 
     prisma
       .$connect()
@@ -46,9 +50,26 @@ const startServer = async () => {
     app.use('/v1', v1Router);
 
     const server = http.createServer(app);
+
+    const queueSocketService = new QueueSocketService(server);
+    console.log(' [Socket] Queue monitoring socket initialized');
+
     server.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
+
+    const shutdown = async () => {
+      console.log('Shutting down gracefully...');
+      queueSocketService.close();
+      await prisma.$disconnect();
+      server.close(() => {
+        console.log('Server closed');
+        process.exit(0);
+      });
+    };
+
+    process.on('SIGTERM', shutdown);
+    process.on('SIGINT', shutdown);
 
     return server;
   } catch (error) {

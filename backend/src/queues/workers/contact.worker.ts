@@ -2,7 +2,9 @@ import { Worker, Job } from 'bullmq';
 
 import RedisConfig from '@/config/redis';
 import { GenerateContactJobData, GenerateContactResult } from '../jobs/contact.jobs';
+
 import { bull } from '@/config/config';
+import contactGenerator from '@/services/ai/generators/contact.generator';
 
 const contactWorker = new Worker<GenerateContactJobData, GenerateContactResult>(
   'contact-generation',
@@ -11,10 +13,12 @@ const contactWorker = new Worker<GenerateContactJobData, GenerateContactResult>(
     console.log(triggeredBy, timestamp);
     console.log('[ContactWorker] - New Job started');
     try {
+      const newContact = await contactGenerator.generate();
+
       return {
         success: true,
-        message: `Contact test generated`,
-        contactId: 'test-id',
+        message: `Contact ${newContact.firstName} ${newContact.lastName} generated`,
+        contactId: newContact.id,
       };
     } catch (error) {
       console.error('[ContactWorker] - Job failed:', error);
@@ -50,14 +54,13 @@ contactWorker.on('active', (job) => {
   console.log(`[ContactWorker] - Job ${job.id} is now active`);
 });
 
-
 const shutdown = async () => {
-    console.log('[ContactWorker] Shutting down gracefully...');
-    await contactWorker.close();
-    process.exit(0);
-  };
+  console.log('[ContactWorker] Shutting down gracefully...');
+  await contactWorker.close();
+  process.exit(0);
+};
 
-  process.on('SIGTERM', shutdown);
-  process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
+process.on('SIGINT', shutdown);
 
-  export default contactWorker;
+export default contactWorker;
